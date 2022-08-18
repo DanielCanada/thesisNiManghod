@@ -13,17 +13,20 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // style of title
-  final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
+  final titleFont = const TextStyle(fontSize: 64, fontWeight: FontWeight.bold);
 
   final buttonFont = const TextStyle(
-      fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
+
+  final versionFont = const TextStyle(
+      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
 
   // button widget - diri lang edit kung ano ang gusto niyo nga button
   Widget buildButton(String label) => SizedBox(
         height: 70,
         width: 140,
         child: Padding(
-          padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.only(top: 12.0, bottom: 5.0),
           child: TextButton(
             onPressed: () {
               if (label == 'Schedule') {
@@ -49,13 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: MaterialStateProperty.all<Color>(
                   const Color.fromARGB(255, 132, 145, 218)),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Text(
-                label,
-                style: GoogleFonts.amaticSc(
-                  textStyle: buttonFont,
-                ),
+            child: Text(
+              label,
+              style: GoogleFonts.amaticSc(
+                textStyle: buttonFont,
               ),
             ),
           ),
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 10, right: 10),
+            padding: const EdgeInsets.only(top: 16.0, left: 10, right: 10),
             child: Column(
               children: [
                 Text(
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     textStyle: titleFont,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 // schedule button
                 buildButton("Schedule"),
                 // Log button
@@ -112,7 +112,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
                         const SizedBox(height: 120),
-                        const Text("©chronus  V1.01"),
+                        Text(
+                          "©chronus  V1.01",
+                          style: GoogleFonts.amaticSc(
+                            textStyle: versionFont,
+                          ),
+                        ),
                       ],
                     )
                   ],

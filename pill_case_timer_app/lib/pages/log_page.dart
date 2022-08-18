@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LogPage extends StatefulWidget {
   const LogPage({Key? key}) : super(key: key);
@@ -8,6 +9,15 @@ class LogPage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<LogPage> {
+  final pageTitleFont = const TextStyle(
+      fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
+
+  final titleFont = const TextStyle(
+      fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
+
+  final bodyFont = const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,9 +27,9 @@ class _MyWidgetState extends State<LogPage> {
         iconTheme: const IconThemeData(
           color: Colors.black, //change your color here
         ),
-        title: const Text(
+        title: Text(
           "Log",
-          style: TextStyle(color: Colors.black),
+          style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
