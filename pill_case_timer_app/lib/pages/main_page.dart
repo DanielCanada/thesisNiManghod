@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const SchedulePage()));
-              } else if (label == 'Log') {
+              } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const LogPage()));
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // schedule button
                 buildButton("Schedule"),
                 // Log button
-                buildButton("Log"),
+                buildButton("Logs"),
                 // Settings button
                 buildButton("About"),
                 // button decoration including image and version #

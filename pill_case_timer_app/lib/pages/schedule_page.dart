@@ -1,6 +1,8 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/models/schedule.dart';
+import 'package:pill_case_timer_app/widgets/schedule_card.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({Key? key}) : super(key: key);
@@ -17,11 +19,10 @@ class _MyWidgetState extends State<SchedulePage> {
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
 
   final bodyFont = const TextStyle(
-      fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
 
   // List of schedules
-
-  final List<String> items = [];
+  final List<Schedule> schedList = [];
 
   @override
   void initState() {
@@ -45,65 +46,121 @@ class _MyWidgetState extends State<SchedulePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: items.isEmpty
-                ? Center(
-                    child: SizedBox(
-                      height: 70,
-                      width: 90,
-                      child: TextButton(
-                        onPressed: (() {
-                          setState(() {
-                            items.add("New Schedule");
-                          });
-                        }),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.add_circle_outline_outlined),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Add",
-                              style: GoogleFonts.amaticSc(textStyle: titleFont),
-                            ),
-                          ],
-                        ),
+      body: schedList.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "You have no scheduled medications!",
+                    style: GoogleFonts.amaticSc(textStyle: titleFont),
+                  ),
+                  SizedBox(
+                    height: 50,
+                    width: 150,
+                    child: TextButton(
+                      onPressed: (() {
+                        setState(() {
+                          const schedule = Schedule(
+                            label: "New Schedule",
+                            alarmTime: "12:00 PM",
+                            schedDate: "MWF",
+                          );
+                          schedList.add(schedule);
+                        });
+                      }),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.medication,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Poke me to add!",
+                            style: GoogleFonts.amaticSc(textStyle: bodyFont),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                : Column(
+                  ),
+                ],
+              ),
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: items.length > 6
-                            ? 330
-                            : (items.length * 55).toDouble(),
+                        height: schedList.length > 6
+                            ? 348
+                            : (schedList.length * 58).toDouble(),
                         width: double.infinity,
                         child: ListView.builder(
-                          itemCount: items.length,
+                          itemCount: schedList.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(
-                                items[index],
-                                style:
-                                    GoogleFonts.amaticSc(textStyle: bodyFont),
+                            return Dismissible(
+                              key: UniqueKey(),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (direction) {
+                                setState(() {
+                                  schedList.removeAt(index);
+                                });
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('Schedule deleted'),
+                                  backgroundColor: Colors.red,
+                                ));
+                              },
+                              background: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0, top: 4, bottom: 4),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(right: 24.0),
+                                    child:
+                                        Icon(Icons.delete, color: Colors.white),
+                                  ),
+                                ),
                               ),
+                              child: ScheduleCard(
+                                  label: schedList[index].label,
+                                  schedDate: schedList[index].schedDate,
+                                  alarmTime: schedList[index].alarmTime),
                             );
                           },
                         ),
                       ),
+                      const SizedBox(height: 10),
                       TextButton(
                         onPressed: (() {
                           setState(() {
-                            items.add("New Schedule");
+                            const schedule = Schedule(
+                              label: "New Schedule",
+                              alarmTime: "12:00 PM",
+                              schedDate: "MWF",
+                            );
+                            schedList.add(schedule);
                           });
                         }),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.add_circle_outline_outlined),
+                            const Icon(
+                              Icons.add_circle_outline_outlined,
+                              color: Colors.black,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               "Add",
@@ -114,9 +171,9 @@ class _MyWidgetState extends State<SchedulePage> {
                       ),
                     ],
                   ),
-          ),
-        ),
-      ),
+                ),
+              ),
+            ),
     );
   }
 }
