@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/pages/log_page.dart';
+import 'package:pill_case_timer_app/pages/schedule_page.dart';
+import 'package:pill_case_timer_app/pages/settings.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -9,14 +13,59 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // style of title
-  final titleFont = const TextStyle(fontSize: 45, fontWeight: FontWeight.bold);
+  final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
 
   final buttonFont = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+
+  // button widget - diri lang edit kung ano ang gusto niyo nga button
+  Widget buildButton(String label) => SizedBox(
+        height: 70,
+        width: 140,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+          child: TextButton(
+            onPressed: () {
+              if (label == 'Schedule') {
+                debugPrint('$label Clicked');
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const SchedulePage()));
+              } else if (label == 'Log') {
+                debugPrint('$label Clicked');
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const LogPage()));
+              } else {
+                debugPrint('$label Clicked');
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const AboutPage()));
+              }
+            },
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                    side: const BorderSide(width: 4.0, color: Colors.black),
+                    borderRadius: BorderRadius.circular(0)),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 132, 145, 218)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Text(
+                label,
+                style: GoogleFonts.amaticSc(
+                  textStyle: buttonFont,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 37, 233, 233),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Center(
@@ -26,99 +75,43 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Text(
                   'PILL',
-                  style: titleFont,
+                  style: GoogleFonts.amaticSc(
+                    textStyle: titleFont,
+                  ),
                 ),
                 Text(
                   'CASE',
-                  style: titleFont,
+                  style: GoogleFonts.amaticSc(
+                    textStyle: titleFont,
+                  ),
                 ),
                 Text(
                   'TIMER',
-                  style: titleFont,
+                  style: GoogleFonts.amaticSc(
+                    textStyle: titleFont,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 // schedule button
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  child: TextButton(
-                    onPressed: () {
-                      debugPrint('Schedule Button Clicked');
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                            side: const BorderSide(
-                                width: 4.0, color: Colors.black),
-                            borderRadius: BorderRadius.circular(0)),
-                      ),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.purpleAccent),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text('Schedule', style: buttonFont),
-                    ),
-                  ),
-                ),
+                buildButton("Schedule"),
                 // Log button
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  child: TextButton(
-                    onPressed: () {
-                      debugPrint('Log Button Clicked');
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                            side: const BorderSide(
-                                width: 4.0, color: Colors.black),
-                            borderRadius: BorderRadius.circular(0)),
-                      ),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.purpleAccent),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text('Log', style: buttonFont),
-                    ),
-                  ),
-                ),
+                buildButton("Log"),
                 // Settings button
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  child: TextButton(
-                    onPressed: () {
-                      debugPrint('Settings Button Clicked');
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                            side: const BorderSide(
-                                width: 4.0, color: Colors.black),
-                            borderRadius: BorderRadius.circular(0)),
-                      ),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.purpleAccent),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text('Settings', style: buttonFont),
-                    ),
-                  ),
-                ),
+                buildButton("About"),
+                // button decoration including image and version #
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Image(
-                      image: AssetImage('assets/image_1.jpg'),
-                      height: 220,
-                      width: 220,
+                      image: AssetImage('assets/hello_patients_01.png'),
+                      height: 180,
+                      width: 180,
                     ),
                     Column(
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
-                        const SizedBox(height: 160),
+                        const SizedBox(height: 120),
                         const Text("©chronus  V1.01"),
                       ],
                     )
