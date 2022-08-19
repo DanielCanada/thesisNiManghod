@@ -10,13 +10,13 @@ class ScheduleCard extends StatelessWidget {
       : super(key: key);
   final String label;
   final String schedDate;
-  final String alarmTime;
+  final TimeOfDay alarmTime;
 
   final titleFont = const TextStyle(
       fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
 
-  final bodyFont = const TextStyle(
-      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
+  final titleFont2 = const TextStyle(
+      fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,21 @@ class ScheduleCard extends StatelessWidget {
             ),
             Text(
               schedDate,
-              style: GoogleFonts.amaticSc(textStyle: titleFont),
+              style: GoogleFonts.amaticSc(textStyle: titleFont2),
             ),
-            Text(
-              alarmTime,
-              style: GoogleFonts.amaticSc(textStyle: titleFont),
+            Row(
+              children: [
+                Text(
+                  alarmTime.hour > 12
+                      ? '${(alarmTime.hour - 12).toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}'
+                      : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
+                Text(
+                  alarmTime.hour > 12 ? 'pm' : 'am',
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
+              ],
             ),
           ]),
         ),

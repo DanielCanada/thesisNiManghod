@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
+import 'package:pill_case_timer_app/pages/add_schedule.dart';
 import 'package:pill_case_timer_app/widgets/schedule_card.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -62,12 +63,10 @@ class _MyWidgetState extends State<SchedulePage> {
                     child: TextButton(
                       onPressed: (() {
                         setState(() {
-                          const schedule = Schedule(
-                            label: "New Schedule",
-                            alarmTime: "12:00 PM",
-                            schedDate: "MWF",
-                          );
-                          schedList.add(schedule);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AddSchedulePage(
+                                    schedList: schedList,
+                                  )));
                         });
                       }),
                       child: Row(
@@ -145,12 +144,10 @@ class _MyWidgetState extends State<SchedulePage> {
                       TextButton(
                         onPressed: (() {
                           setState(() {
-                            const schedule = Schedule(
-                              label: "New Schedule",
-                              alarmTime: "12:00 PM",
-                              schedDate: "MWF",
-                            );
-                            schedList.add(schedule);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => AddSchedulePage(
+                                      schedList: schedList,
+                                    )));
                           });
                         }),
                         child: Row(

@@ -45,10 +45,10 @@ class _MyWidgetState extends State<AboutPage> {
                 style: GoogleFonts.amaticSc(textStyle: titleFont),
               ),
               const SizedBox(height: 16),
-              Text(
-                "App built using Flutter with google fonts, db_name, and a little bit of Google :D",
-                style: GoogleFonts.amaticSc(textStyle: bodyFont),
-              ),
+              // Text(
+              //   "App built using Flutter with google fonts, db_name, and a little bit of Google :D",
+              //   style: GoogleFonts.amaticSc(textStyle: bodyFont),
+              // ),
               const SizedBox(height: 16),
               Text(
                 "Members: ",

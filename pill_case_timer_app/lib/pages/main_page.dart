@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pill_case_timer_app/pages/log_page.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
-import 'package:pill_case_timer_app/pages/settings.dart';
+import 'package:pill_case_timer_app/pages/about.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
