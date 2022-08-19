@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pill_case_timer_app/pages/main_page.dart';
+import 'package:pill_case_timer_app/pages/onBoarding%20pages/first_page.dart';
+import 'package:pill_case_timer_app/pages/onBoarding%20pages/onboarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      // home: const MyHomePage(),
+      home: const OnBoardingScreen(),
     );
   }
 }
