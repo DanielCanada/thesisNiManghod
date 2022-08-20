@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/pages/main_page.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+  final VoidCallback showLoginPage;
+  const SignupPage({Key? key, required this.showLoginPage}) : super(key: key);
 
   @override
   State<SignupPage> createState() => _LoginPageState();
@@ -19,6 +21,50 @@ class _LoginPageState extends State<SignupPage> {
   final labelFont = const TextStyle(fontSize: 14, color: Colors.black);
   final botFont2 = const TextStyle(fontSize: 16, color: Colors.deepOrange);
 
+  // text controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future signUp() async {
+    try {
+      if (passwordConfirmed()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim());
+      } else {
+        const passNotTheSame = SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Oops! Your passwords does not match'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(passNotTheSame);
+      }
+    } catch (e) {
+      const invalidUser = SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Oops! Kindly review your details and try again'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(invalidUser);
+    }
+  }
+
+  bool passwordConfirmed() {
+    if (_passwordController.text.trim() ==
+        _confirmPasswordController.text.trim()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Widget signInButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
         child: Container(
@@ -29,7 +75,7 @@ class _LoginPageState extends State<SignupPage> {
           ),
           child: Center(
               child: Text(
-            "Register",
+            "Sign Up",
             style: GoogleFonts.fjallaOne(
               textStyle: subtitleFont,
             ),
@@ -53,7 +99,7 @@ class _LoginPageState extends State<SignupPage> {
                   child: Center(child: Lottie.asset("assets/create_acc.json")),
                 ),
                 Text(
-                  'Sign up',
+                  'HELLO THERE',
                   style: GoogleFonts.fjallaOne(
                     textStyle: titleFont,
                   ),
@@ -66,47 +112,15 @@ class _LoginPageState extends State<SignupPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // names
-                Padding(
-                  padding: const EdgeInsets.only(left: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'First name',
-                        style: GoogleFonts.fjallaOne(
-                          textStyle: labelFont,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none, hintText: 'First Name'),
-                      ),
-                    ),
-                  ),
-                ),
-                //last name
+
+                // email
                 Padding(
                   padding: const EdgeInsets.only(left: 18, top: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'Last name',
+                        'Email',
                         style: GoogleFonts.fjallaOne(
                           textStyle: labelFont,
                         ),
@@ -123,44 +137,12 @@ class _LoginPageState extends State<SignupPage> {
                       border: Border.all(color: Colors.white),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none, hintText: 'Last Name'),
-                      ),
-                    ),
-                  ),
-                ),
-                // username
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, top: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Username',
-                        style: GoogleFonts.fjallaOne(
-                          textStyle: labelFont,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none, hintText: 'Username'),
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
                       ),
                     ),
                   ),
@@ -189,12 +171,48 @@ class _LoginPageState extends State<SignupPage> {
                       border: Border.all(color: Colors.white),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       child: TextField(
+                        controller: _passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                            border: InputBorder.none, hintText: 'Password'),
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
+                      ),
+                    ),
+                  ),
+                ),
+                // password
+                Padding(
+                  padding: const EdgeInsets.only(left: 18, top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Confirm Password',
+                        style: GoogleFonts.fjallaOne(
+                          textStyle: labelFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
                       ),
                     ),
                   ),
@@ -202,14 +220,7 @@ class _LoginPageState extends State<SignupPage> {
                 // sign in button
                 GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return const MyHomePage();
-                          },
-                        ),
-                      );
+                      signUp();
                     },
                     child: signInButton()),
 
@@ -224,9 +235,7 @@ class _LoginPageState extends State<SignupPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                      onTap: widget.showLoginPage,
                       child: Text(
                         "Login",
                         style: GoogleFonts.fjallaOne(
@@ -244,3 +253,70 @@ class _LoginPageState extends State<SignupPage> {
     );
   }
 }
+
+// // names
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 18),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         'First name',
+                //         style: GoogleFonts.fjallaOne(
+                //           textStyle: labelFont,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: Colors.grey[200],
+                //       border: Border.all(color: Colors.white),
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     child: const Padding(
+                //       padding: EdgeInsets.only(left: 10, right: 10),
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //             border: InputBorder.none, hintText: ''),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // //last name
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 18, top: 2),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         'Last name',
+                //         style: GoogleFonts.fjallaOne(
+                //           textStyle: labelFont,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: Colors.grey[200],
+                //       border: Border.all(color: Colors.white),
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     child: const Padding(
+                //       padding: EdgeInsets.only(left: 10, right: 10),
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //             border: InputBorder.none, hintText: ''),
+                //       ),
+                //     ),
+                //   ),
+                // ),

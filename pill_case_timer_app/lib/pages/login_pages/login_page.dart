@@ -5,7 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/pages/login_pages/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final VoidCallback showSignupPage;
+  const LoginPage({Key? key, required this.showSignupPage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -180,18 +181,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const SignupPage();
-                            },
-                          ),
-                        );
-                      },
+                      onTap: widget.showSignupPage,
                       child: Text(
-                        "Register now",
+                        "Create account",
                         style: GoogleFonts.fjallaOne(
                           textStyle: botFont2,
                         ),

@@ -1,16 +1,22 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pill_case_timer_app/pages/initial_main_page.dart';
+import 'package:pill_case_timer_app/pages/onBoarding%20pages/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final showAuth = prefs.getBool('showAuth') ?? false;
+
+  runApp(MyApp(showAuth: showAuth));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool showAuth;
+  const MyApp({Key? key, required this.showAuth}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -22,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const MyHomePage(),
-      home: InitialMainPage(),
+      home: showAuth ? const InitialMainPage() : const OnBoardingScreen(),
     );
   }
 }

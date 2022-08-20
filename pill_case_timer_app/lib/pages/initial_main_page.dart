@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pill_case_timer_app/pages/login_pages/auth_change_page.dart';
 import 'package:pill_case_timer_app/pages/main_page.dart';
 
 import 'login_pages/login_page.dart';
@@ -17,7 +18,7 @@ class InitialMainPage extends StatelessWidget {
             if (snapshot.hasData) {
               return MyHomePage();
             } else {
-              return LoginPage();
+              return AuthPage();
             }
           }),
     );

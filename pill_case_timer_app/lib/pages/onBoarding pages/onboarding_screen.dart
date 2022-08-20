@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/pages/login_pages/auth_change_page.dart';
 import 'package:pill_case_timer_app/pages/login_pages/login_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/first_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/second_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/third_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -67,15 +69,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   // next / done
                   onLastPage
                       ? GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const LoginPage();
-                                },
-                              ),
-                            );
+                          onTap: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setBool('showAuth', true);
+
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const AuthPage()));
                           },
                           child: Text(
                             "Done",
