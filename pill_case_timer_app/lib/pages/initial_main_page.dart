@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pill_case_timer_app/pages/login_pages/auth_change_page.dart';
 import 'package:pill_case_timer_app/pages/main_page.dart';
 
-import 'login_pages/login_page.dart';
-import 'onBoarding pages/onboarding_screen.dart';
-
 class InitialMainPage extends StatelessWidget {
   const InitialMainPage({Key? key}) : super(key: key);
 
@@ -16,9 +13,9 @@ class InitialMainPage extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return MyHomePage();
+              return const MyHomePage();
             } else {
-              return AuthPage();
+              return const AuthPage();
             }
           }),
     );

@@ -121,9 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           // ignore: prefer_const_literals_to_create_immutables
                           children: [
-                            const SizedBox(height: 70),
+                            const SizedBox(height: 40),
                             Text(
-                              "Welcome ${name[0]}!",
+                              "Hello There!",
+                              style: GoogleFonts.amaticSc(
+                                textStyle: buttonFont,
+                              ),
+                            ),
+                            Text(
+                              name[0],
                               style: GoogleFonts.amaticSc(
                                 textStyle: buttonFont,
                               ),
