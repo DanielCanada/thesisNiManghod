@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 class Schedule {
-  final String label;
+  final String schedName;
   final String schedDate;
-  final TimeOfDay alarmTime;
+  final DateTime alarmTime;
 
   const Schedule({
-    required this.label,
+    required this.schedName,
     required this.schedDate,
     required this.alarmTime,
   });
+
+  Map<String, dynamic> toJson() =>
+      {'schedName': schedName, 'schedDate': schedDate, 'alarmTime': alarmTime};
 }

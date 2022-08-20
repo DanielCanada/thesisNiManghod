@@ -1,13 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:day_picker/day_picker.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
-import 'package:pill_case_timer_app/pages/schedule_page.dart';
 
 class AddSchedulePage extends StatefulWidget {
   final List<Schedule> schedList;
+  final String name;
 
-  const AddSchedulePage({Key? key, required this.schedList}) : super(key: key);
+  const AddSchedulePage({Key? key, required this.schedList, required this.name})
+      : super(key: key);
 
   @override
   State<AddSchedulePage> createState() => _AddScheduleState();
@@ -22,7 +24,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
   final buttonFont = const TextStyle(
       fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
   // text controllers
-  final nameController = TextEditingController();
+  final schedNameController = TextEditingController();
   final detailsController = TextEditingController();
   final durationController = TextEditingController();
   final doctorController = TextEditingController();
@@ -37,10 +39,43 @@ class _AddScheduleState extends State<AddSchedulePage> {
   @override
   void initState() {
     super.initState();
-    nameController.addListener(() => setState(() {}));
+    schedNameController.addListener(() => setState(() {}));
     detailsController.addListener(() => setState(() {}));
     durationController.addListener(() => setState(() {}));
     doctorController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    schedNameController.dispose();
+    detailsController.dispose();
+    durationController.dispose();
+    doctorController.dispose();
+    super.dispose();
+  }
+
+  // time
+  DateTime join(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  // create to firebase
+  Future createSchedule(
+      String schedName, String schedDate, TimeOfDay alarmTime) async {
+    final docSched = FirebaseFirestore.instance
+        .collection("patients")
+        .doc(widget.name)
+        .collection("schedules")
+        .doc(schedName);
+
+    final newSched = Schedule(
+        schedName: schedName,
+        schedDate: schedDate,
+        alarmTime: join(DateTime.now(), alarmTime));
+
+    final json = newSched.toJson();
+
+    await docSched.set(json);
   }
 
   // Date Picker
@@ -111,7 +146,9 @@ class _AddScheduleState extends State<AddSchedulePage> {
           padding: const EdgeInsets.only(top: 12.0, bottom: 5.0),
           child: TextButton(
             onPressed: () {
-              addSchedule();
+              createSchedule(
+                  schedNameController.text.trim(), daysSelected.join(""), time);
+              Navigator.pop(context);
             },
             style: ButtonStyle(
               shape: MaterialStateProperty.all<OutlinedBorder>(
@@ -145,26 +182,26 @@ class _AddScheduleState extends State<AddSchedulePage> {
   }
 
   // function to save schedule
-  void addSchedule() {
-    if (nameController.text.isEmpty && doctorController.text.isEmpty) {
-      nothingToSave();
-    } else {
-      final schedule = Schedule(
-        label: nameController.text,
-        alarmTime: time,
-        schedDate: daysSelected.join(""),
-      );
-      widget.schedList.add(schedule);
-      print(daysSelected);
-      nameController.clear();
-      detailsController.clear();
-      durationController.clear();
-      doctorController.clear();
+  // void addSchedule() {
+  //   if (schedNameController.text.isEmpty && doctorController.text.isEmpty) {
+  //     nothingToSave();
+  //   } else {
+  //     final schedule = Schedule(
+  //       label: schedNameController.text,
+  //       alarmTime: time,
+  //       schedDate: daysSelected.join(""),
+  //     );
+  //     widget.schedList.add(schedule);
+  //     print(daysSelected);
+  //     schedNameController.clear();
+  //     detailsController.clear();
+  //     durationController.clear();
+  //     doctorController.clear();
 
-      debugPrint('Saved');
-      Navigator.of(context).pop();
-    }
-  }
+  //     debugPrint('Saved');
+  //     Navigator.of(context).pop();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +236,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                         "Name:",
                         style: GoogleFonts.amaticSc(textStyle: titleFont),
                       ),
-                      buildName(nameController),
+                      buildName(schedNameController),
                     ],
                   ),
                   // Details

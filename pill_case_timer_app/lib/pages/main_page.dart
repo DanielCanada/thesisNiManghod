@@ -38,7 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
               if (label == 'Schedule') {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const SchedulePage()));
+                    builder: (context) => SchedulePage(
+                          name: name[0].toString(),
+                        )));
               } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(

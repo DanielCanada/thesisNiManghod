@@ -6,7 +6,8 @@ import 'package:pill_case_timer_app/pages/add_schedule.dart';
 import 'package:pill_case_timer_app/widgets/schedule_card.dart';
 
 class SchedulePage extends StatefulWidget {
-  const SchedulePage({Key? key}) : super(key: key);
+  final String name;
+  const SchedulePage({Key? key, required this.name}) : super(key: key);
 
   @override
   State<SchedulePage> createState() => _MyWidgetState();
@@ -27,7 +28,6 @@ class _MyWidgetState extends State<SchedulePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -66,6 +66,7 @@ class _MyWidgetState extends State<SchedulePage> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => AddSchedulePage(
                                     schedList: schedList,
+                                    name: widget.name,
                                   )));
                         });
                       }),
@@ -133,7 +134,7 @@ class _MyWidgetState extends State<SchedulePage> {
                                 ),
                               ),
                               child: ScheduleCard(
-                                  label: schedList[index].label,
+                                  label: schedList[index].schedName,
                                   schedDate: schedList[index].schedDate,
                                   alarmTime: schedList[index].alarmTime),
                             );
@@ -147,6 +148,7 @@ class _MyWidgetState extends State<SchedulePage> {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => AddSchedulePage(
                                       schedList: schedList,
+                                      name: widget.name,
                                     )));
                           });
                         }),

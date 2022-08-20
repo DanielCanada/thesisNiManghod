@@ -10,7 +10,7 @@ class ScheduleCard extends StatelessWidget {
       : super(key: key);
   final String label;
   final String schedDate;
-  final TimeOfDay alarmTime;
+  final DateTime alarmTime;
 
   final titleFont = const TextStyle(
       fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
