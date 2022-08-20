@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -17,6 +18,31 @@ class _LoginPageState extends State<LoginPage> {
       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white);
   final botFont = const TextStyle(fontSize: 16, color: Colors.black);
   final botFont2 = const TextStyle(fontSize: 16, color: Colors.white);
+
+  // text controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+    } catch (e) {
+      const invalidUser = SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Account does not exist'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(invalidUser);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   Widget signInButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
@@ -64,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Username',
+                      'Email',
                       style: GoogleFonts.fjallaOne(
                         textStyle: botFont,
                       ),
@@ -73,18 +99,19 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 5.0, left: 25, right: 25),
+                padding: const EdgeInsets.only(top: 2.0, left: 25, right: 25),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.white),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
                     child: TextField(
-                      decoration: InputDecoration(
-                          border: InputBorder.none, hintText: 'Username'),
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'Email'),
                     ),
                   ),
                 ),
@@ -105,21 +132,21 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 2),
               Padding(
                 padding: const EdgeInsets.only(
-                    top: 5.0, left: 25, right: 25, bottom: 8),
+                    top: 2.0, left: 25, right: 25, bottom: 6),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.white),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
                     child: TextField(
+                      controller: _passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: InputBorder.none, hintText: '**********'),
                     ),
                   ),
@@ -128,14 +155,16 @@ class _LoginPageState extends State<LoginPage> {
               // sign in button
               GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const SignupPage();
-                        },
-                      ),
-                    );
+                    if (_emailController.text.isEmpty &&
+                        _passwordController.text.isEmpty) {
+                      const invalid = SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('Please provide Log-in credentials'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(invalid);
+                    } else {
+                      signIn();
+                    }
                   },
                   child: signInButton()),
               // not a member? register now

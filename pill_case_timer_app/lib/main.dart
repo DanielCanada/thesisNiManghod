@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pill_case_timer_app/pages/main_page.dart';
-import 'package:pill_case_timer_app/pages/onBoarding%20pages/first_page.dart';
-import 'package:pill_case_timer_app/pages/onBoarding%20pages/onboarding_screen.dart';
+import 'package:pill_case_timer_app/pages/initial_main_page.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const MyHomePage(),
-      home: const OnBoardingScreen(),
+      home: InitialMainPage(),
     );
   }
 }
