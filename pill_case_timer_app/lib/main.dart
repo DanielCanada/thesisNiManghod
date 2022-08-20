@@ -1,9 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pill_case_timer_app/pages/main_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/first_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/onboarding_screen.dart';
 
-void main() {
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "310152387302",
+    "project_id": "pill-case-timer-thesis",
+    "storage_bucket": "pill-case-timer-thesis.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310152387302:android:8c97d253d23ca12cb57927",
+        "android_client_info": {
+          "package_name": "com.example.pill_case_timer_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310152387302-2ftu54iefd95db622rhgjjtabcpt8m4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAecaQzlXuoOLpw0s92_0Ywz_wGmtdZeVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310152387302-2ftu54iefd95db622rhgjjtabcpt8m4q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
