@@ -5,11 +5,9 @@ import 'package:day_picker/day_picker.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 
 class AddSchedulePage extends StatefulWidget {
-  final List<Schedule> schedList;
   final String name;
 
-  const AddSchedulePage({Key? key, required this.schedList, required this.name})
-      : super(key: key);
+  const AddSchedulePage({Key? key, required this.name}) : super(key: key);
 
   @override
   State<AddSchedulePage> createState() => _AddScheduleState();
@@ -23,13 +21,16 @@ class _AddScheduleState extends State<AddSchedulePage> {
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
   final buttonFont = const TextStyle(
       fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
+
   // text controllers
   final schedNameController = TextEditingController();
   final detailsController = TextEditingController();
   final durationController = TextEditingController();
   final doctorController = TextEditingController();
+
   // alarm switch
   bool isSwitched = false;
+
   // background color variable
   static Color bgColor = const Color.fromARGB(255, 37, 233, 233);
 
@@ -60,8 +61,8 @@ class _AddScheduleState extends State<AddSchedulePage> {
   }
 
   // create to firebase
-  Future createSchedule(
-      String schedName, String schedDate, TimeOfDay alarmTime) async {
+  Future createSchedule(String schedName, String schedDate, String details,
+      String duration, String doctorName, TimeOfDay alarmTime) async {
     final docSched = FirebaseFirestore.instance
         .collection("patients")
         .doc(widget.name)
@@ -71,7 +72,11 @@ class _AddScheduleState extends State<AddSchedulePage> {
     final newSched = Schedule(
         schedName: schedName,
         schedDate: schedDate,
-        alarmTime: join(DateTime.now(), alarmTime));
+        details: details,
+        duration: duration,
+        doctorName: doctorName,
+        alarmTime: join(DateTime.now(), alarmTime),
+        createdAt: DateTime.now());
 
     final json = newSched.toJson();
 
@@ -147,7 +152,12 @@ class _AddScheduleState extends State<AddSchedulePage> {
           child: TextButton(
             onPressed: () {
               createSchedule(
-                  schedNameController.text.trim(), daysSelected.join(""), time);
+                  schedNameController.text.trim(),
+                  daysSelected.join(""),
+                  detailsController.text.trim(),
+                  durationController.text.trim(),
+                  doctorController.text.trim(),
+                  time);
               Navigator.pop(context);
             },
             style: ButtonStyle(
@@ -167,6 +177,11 @@ class _AddScheduleState extends State<AddSchedulePage> {
         ),
       );
 
+  Widget buildText(String text, TextStyle textStyle) => Text(
+        text,
+        style: textStyle,
+      );
+
   // show when there is no input
   void nothingToSave() {
     const message = 'Nothing to save';
@@ -181,28 +196,6 @@ class _AddScheduleState extends State<AddSchedulePage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  // function to save schedule
-  // void addSchedule() {
-  //   if (schedNameController.text.isEmpty && doctorController.text.isEmpty) {
-  //     nothingToSave();
-  //   } else {
-  //     final schedule = Schedule(
-  //       label: schedNameController.text,
-  //       alarmTime: time,
-  //       schedDate: daysSelected.join(""),
-  //     );
-  //     widget.schedList.add(schedule);
-  //     print(daysSelected);
-  //     schedNameController.clear();
-  //     detailsController.clear();
-  //     durationController.clear();
-  //     doctorController.clear();
-
-  //     debugPrint('Saved');
-  //     Navigator.of(context).pop();
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,10 +206,8 @@ class _AddScheduleState extends State<AddSchedulePage> {
         iconTheme: const IconThemeData(
           color: Colors.black, //change your color here
         ),
-        title: Text(
-          "Add Schedule",
-          style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
-        ),
+        title: buildText(
+            "Add Schedule", GoogleFonts.amaticSc(textStyle: pageTitleFont)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -232,30 +223,24 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   // Name:
                   Row(
                     children: <Widget>[
-                      Text(
-                        "Name:",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText(
+                          "Name:", GoogleFonts.amaticSc(textStyle: titleFont)),
                       buildName(schedNameController),
                     ],
                   ),
                   // Details
                   Row(
                     children: <Widget>[
-                      Text(
-                        "Details:",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText("Details:",
+                          GoogleFonts.amaticSc(textStyle: titleFont)),
                       buildName(detailsController),
                     ],
                   ),
                   //Duration
                   Row(
                     children: <Widget>[
-                      Text(
-                        "Duration:",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText("Duration:",
+                          GoogleFonts.amaticSc(textStyle: titleFont)),
                       buildName(durationController),
                     ],
                   ),
@@ -286,10 +271,8 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Start:",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText(
+                          "Start:", GoogleFonts.amaticSc(textStyle: titleFont)),
                       TextButton(
                         onPressed: () async {
                           TimeOfDay? newTime = await showTimePicker(
@@ -321,10 +304,8 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Alarm ",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText(
+                          "Alarm", GoogleFonts.amaticSc(textStyle: titleFont)),
                       Switch(
                         value: isSwitched,
                         onChanged: (value) {
@@ -341,17 +322,13 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   ),
                   const SizedBox(height: 6),
                   // Sound
-                  Text(
-                    "Sound:  ",
-                    style: GoogleFonts.amaticSc(textStyle: titleFont),
-                  ),
+                  buildText(
+                      "Sound:", GoogleFonts.amaticSc(textStyle: titleFont)),
                   //Day Scheduler
                   Row(
                     children: <Widget>[
-                      Text(
-                        "Doctor:",
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
+                      buildText("Doctor:",
+                          GoogleFonts.amaticSc(textStyle: titleFont)),
                       buildName(doctorController),
                     ],
                   ),

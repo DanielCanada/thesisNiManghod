@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
 import 'package:pill_case_timer_app/pages/log_page.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/about.dart';
@@ -43,8 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         )));
               } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const LogPage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const UnderDevelopment()));
               } else {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(
@@ -79,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: SafeArea(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.only(top: 16.0, left: 10, right: 10),
+              padding: const EdgeInsets.only(top: 22.0, left: 10, right: 10),
               child: Column(
                 children: [
                   Text(
@@ -110,47 +112,50 @@ class _MyHomePageState extends State<MyHomePage> {
                   // button decoration including image and version #
                   Container(
                     alignment: const Alignment(0, 0.80),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Image(
-                          image: AssetImage('assets/hello_patients_01.png'),
-                          height: 180,
-                          width: 180,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          // ignore: prefer_const_literals_to_create_immutables
-                          children: [
-                            const SizedBox(height: 40),
-                            Text(
-                              "Hello There!",
-                              style: GoogleFonts.amaticSc(
-                                textStyle: buttonFont,
-                              ),
-                            ),
-                            Text(
-                              name[0],
-                              style: GoogleFonts.amaticSc(
-                                textStyle: buttonFont,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            GestureDetector(
-                              onTap: () {
-                                FirebaseAuth.instance.signOut();
-                              },
-                              child: Text(
-                                "Sign Out?",
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Image(
+                            image: AssetImage('assets/hello_patients_01.png'),
+                            height: 190,
+                            width: 190,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: [
+                              const SizedBox(height: 40),
+                              Text(
+                                "Welcome!",
                                 style: GoogleFonts.amaticSc(
-                                  textStyle: versionFont,
+                                  textStyle: buttonFont,
                                 ),
                               ),
-                            ),
-                          ],
-                        )
-                      ],
+                              Text(
+                                name[0],
+                                style: GoogleFonts.amaticSc(
+                                  textStyle: buttonFont,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              GestureDetector(
+                                onTap: () {
+                                  FirebaseAuth.instance.signOut();
+                                },
+                                child: Text(
+                                  "Sign Out?",
+                                  style: GoogleFonts.amaticSc(
+                                    textStyle: versionFont,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -1,8 +1,12 @@
 import 'dart:core';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/pages/add_schedule.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
+import 'package:pill_case_timer_app/pages/edit_schedule.dart';
 import 'package:pill_case_timer_app/widgets/schedule_card.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -24,122 +28,151 @@ class _MyWidgetState extends State<SchedulePage> {
       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
 
   // List of schedules
-  final List<Schedule> schedList = [];
+  final List<Schedule> snapshot = [];
 
   @override
   void initState() {
     super.initState();
   }
 
+  Stream<List<Schedule>> getSchedules() => FirebaseFirestore.instance
+      .collection('patients')
+      .doc(widget.name)
+      .collection("schedules")
+      .orderBy("createdAt", descending: false)
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => Schedule.fromJson(doc.data())).toList());
+
+  Widget buildSchedules(Schedule sched) => Dismissible(
+        key: UniqueKey(),
+        direction: DismissDirection.endToStart,
+        onDismissed: (direction) {
+          setState(() {
+            final docSched = FirebaseFirestore.instance
+                .collection('patients')
+                .doc(widget.name)
+                .collection("schedules")
+                .doc(sched.schedName);
+            docSched.delete();
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Schedule deleted'),
+            backgroundColor: Colors.red,
+          ));
+        },
+        background: Padding(
+          padding:
+              const EdgeInsets.only(left: 10.0, right: 10.0, top: 4, bottom: 4),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.red,
+            ),
+            alignment: Alignment.centerRight,
+            child: const Padding(
+              padding: EdgeInsets.only(right: 24.0),
+              child: Icon(Icons.delete, color: Colors.white),
+            ),
+          ),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => EditSchedulePage(
+                        name: widget.name,
+                        schedName: sched.schedName,
+                      )));
+            });
+          },
+          child: ScheduleCard(
+              label: sched.schedName,
+              schedDate: sched.schedDate,
+              alarmTime: sched.alarmTime),
+        ),
+      );
+
+  Widget noSchedulesRecorded() => Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Lottie.asset("assets/pills01.json", height: 180, width: 200),
+              Text(
+                "You have no scheduled medications!",
+                style: GoogleFonts.amaticSc(textStyle: titleFont),
+              ),
+              SizedBox(
+                height: 50,
+                width: 150,
+                child: TextButton(
+                  onPressed: (() {
+                    setState(() {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AddSchedulePage(
+                                name: widget.name,
+                              )));
+                    });
+                  }),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.medication,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Poke me to add!",
+                        style: GoogleFonts.amaticSc(textStyle: bodyFont),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 37, 233, 233),
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.black, //change your color here
+        backgroundColor: const Color.fromARGB(255, 37, 233, 233),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.black, //change your color here
+          ),
+          title: Text(
+            "Schedule",
+            style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
-        title: Text(
-          "Schedule",
-          style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: schedList.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "You have no scheduled medications!",
-                    style: GoogleFonts.amaticSc(textStyle: titleFont),
-                  ),
-                  SizedBox(
-                    height: 50,
-                    width: 150,
-                    child: TextButton(
-                      onPressed: (() {
-                        setState(() {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => AddSchedulePage(
-                                    schedList: schedList,
-                                    name: widget.name,
-                                  )));
-                        });
-                      }),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.medication,
-                            color: Colors.black,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Poke me to add!",
-                            style: GoogleFonts.amaticSc(textStyle: bodyFont),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    // mainAxisAlignment: MainAxisAlignment.center,
+        body: SafeArea(
+            child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: StreamBuilder<List<Schedule>>(
+            stream: getSchedules(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const SomethingWentWrong();
+              } else if (snapshot.hasData) {
+                final schedules = snapshot.data!;
+                if (schedules.isEmpty) {
+                  return noSchedulesRecorded();
+                } else {
+                  return Column(
                     children: [
                       SizedBox(
-                        height: schedList.length > 6
+                        height: snapshot.data!.length > 6
                             ? 348
-                            : (schedList.length * 58).toDouble(),
+                            : (snapshot.data!.length * 58).toDouble(),
                         width: double.infinity,
-                        child: ListView.builder(
-                          itemCount: schedList.length,
-                          itemBuilder: (context, index) {
-                            return Dismissible(
-                              key: UniqueKey(),
-                              direction: DismissDirection.endToStart,
-                              onDismissed: (direction) {
-                                setState(() {
-                                  schedList.removeAt(index);
-                                });
-
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text('Schedule deleted'),
-                                  backgroundColor: Colors.red,
-                                ));
-                              },
-                              background: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10.0, right: 10.0, top: 4, bottom: 4),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                  ),
-                                  alignment: Alignment.centerRight,
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(right: 24.0),
-                                    child:
-                                        Icon(Icons.delete, color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              child: ScheduleCard(
-                                  label: schedList[index].schedName,
-                                  schedDate: schedList[index].schedDate,
-                                  alarmTime: schedList[index].alarmTime),
-                            );
-                          },
-                        ),
+                        child: ListView(
+                            children: schedules.map(buildSchedules).toList()),
                       ),
                       const SizedBox(height: 10),
                       TextButton(
@@ -147,7 +180,6 @@ class _MyWidgetState extends State<SchedulePage> {
                           setState(() {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => AddSchedulePage(
-                                      schedList: schedList,
                                       name: widget.name,
                                     )));
                           });
@@ -169,10 +201,13 @@ class _MyWidgetState extends State<SchedulePage> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-    );
+                  );
+                }
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        )));
   }
 }
