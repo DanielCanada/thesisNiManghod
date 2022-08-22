@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Schedule {
+  String id;
   final String schedName;
   final String schedDate;
   final String details;
@@ -10,8 +11,9 @@ class Schedule {
   final DateTime alarmTime;
   final DateTime createdAt;
 
-  const Schedule(
-      {required this.schedName,
+  Schedule(
+      {this.id = '',
+      required this.schedName,
       required this.schedDate,
       required this.details,
       required this.duration,
@@ -20,6 +22,7 @@ class Schedule {
       required this.createdAt});
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'schedName': schedName,
         'schedDate': schedDate,
         'details': details,
@@ -30,6 +33,7 @@ class Schedule {
       };
 
   static Schedule fromJson(Map<String, dynamic> json) => Schedule(
+      id: json['id'],
       schedName: json['schedName'],
       schedDate: json['schedDate'],
       details: json['details'],

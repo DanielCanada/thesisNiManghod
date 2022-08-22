@@ -67,9 +67,10 @@ class _AddScheduleState extends State<AddSchedulePage> {
         .collection("patients")
         .doc(widget.name)
         .collection("schedules")
-        .doc(schedName);
+        .doc();
 
     final newSched = Schedule(
+        id: docSched.id,
         schedName: schedName,
         schedDate: schedDate,
         details: details,
@@ -122,7 +123,6 @@ class _AddScheduleState extends State<AddSchedulePage> {
             decoration: InputDecoration(
               border: const UnderlineInputBorder(),
               hintStyle: const TextStyle(color: Colors.black),
-              // labelText: 'Name of product / expenses',
               labelStyle: const TextStyle(color: Colors.black),
               suffixIcon: controller.text.isEmpty
                   ? Container(
@@ -151,14 +151,25 @@ class _AddScheduleState extends State<AddSchedulePage> {
           padding: const EdgeInsets.only(top: 12.0, bottom: 5.0),
           child: TextButton(
             onPressed: () {
-              createSchedule(
-                  schedNameController.text.trim(),
-                  daysSelected.join(""),
-                  detailsController.text.trim(),
-                  durationController.text.trim(),
-                  doctorController.text.trim(),
-                  time);
-              Navigator.pop(context);
+              if (schedNameController.text.trim().isEmpty ||
+                  doctorController.text.trim().isEmpty ||
+                  durationController.text.trim().isEmpty) {
+                setState(() {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Kindly fill in the required information'),
+                    backgroundColor: Colors.red,
+                  ));
+                });
+              } else {
+                createSchedule(
+                    schedNameController.text.trim(),
+                    daysSelected.join(""),
+                    detailsController.text.trim(),
+                    durationController.text.trim(),
+                    doctorController.text.trim(),
+                    time);
+                Navigator.pop(context);
+              }
             },
             style: ButtonStyle(
               shape: MaterialStateProperty.all<OutlinedBorder>(
@@ -320,10 +331,9 @@ class _AddScheduleState extends State<AddSchedulePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
                   // Sound
                   buildText(
-                      "Sound:", GoogleFonts.amaticSc(textStyle: titleFont)),
+                      "Sound", GoogleFonts.amaticSc(textStyle: titleFont)),
                   //Day Scheduler
                   Row(
                     children: <Widget>[

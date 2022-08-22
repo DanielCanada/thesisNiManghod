@@ -8,10 +8,9 @@ import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
 
 class EditSchedulePage extends StatefulWidget {
   final String name;
-  final String schedName;
+  final String schedId;
 
-  const EditSchedulePage(
-      {Key? key, required this.name, required this.schedName})
+  const EditSchedulePage({Key? key, required this.name, required this.schedId})
       : super(key: key);
 
   @override
@@ -36,8 +35,12 @@ class _AddScheduleState extends State<EditSchedulePage> {
   // alarm switch
   bool isSwitched = false;
 
+  bool dateSaved = false;
+  bool timeChanged = false;
+
   // time
   static TimeOfDay time = const TimeOfDay(hour: 00, minute: 00);
+  static TimeOfDay updatedTime = const TimeOfDay(hour: 00, minute: 00);
 
   // background color variable
   static Color bgColor = const Color.fromARGB(255, 37, 233, 233);
@@ -54,9 +57,10 @@ class _AddScheduleState extends State<EditSchedulePage> {
         .collection("patients")
         .doc(widget.name)
         .collection("schedules")
-        .doc(widget.schedName);
+        .doc(widget.schedId);
 
     final newSched = Schedule(
+        id: widget.schedId,
         schedName: schedName,
         schedDate: schedDate,
         details: details,
@@ -76,7 +80,7 @@ class _AddScheduleState extends State<EditSchedulePage> {
         .collection('patients')
         .doc(widget.name)
         .collection('schedules')
-        .doc(widget.schedName);
+        .doc(widget.schedId);
 
     final snapshot = await specSched.get();
 
@@ -89,6 +93,8 @@ class _AddScheduleState extends State<EditSchedulePage> {
   late List<String> daysSelected = [];
 
   late List<String> newDaysSelected = [];
+
+  late List<String> oldDaysSelected = [];
 
   bool isScheduled(String day) {
     if (daysSelected.contains(day)) {
@@ -109,45 +115,16 @@ class _AddScheduleState extends State<EditSchedulePage> {
   ];
 
   void getDays(String schedDates) {
-    for (int i = 0; i < schedDates.length; i++) {
-      daysSelected.add(schedDates[i]);
-    }
+    if (!dateSaved) {
+      for (int i = 0; i < schedDates.length; i++) {
+        daysSelected.add(schedDates[i]);
+      }
+      oldDaysSelected = daysSelected;
+      dateSaved = !dateSaved; // save old scheduled dates
+    } else {}
   }
 
   // W I D G E T S
-  //name widget
-  Widget buildName(TextEditingController controller, String existing) =>
-      Padding(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: SizedBox(
-          width: 260,
-          child: TextFormField(
-            controller: controller = TextEditingController(text: existing),
-            cursorColor: Colors.black,
-            decoration: InputDecoration(
-              border: const UnderlineInputBorder(),
-              hintStyle: const TextStyle(color: Colors.black),
-              // labelText: 'Name of product / expenses',
-              labelStyle: const TextStyle(color: Colors.black),
-              suffixIcon: controller.text.isEmpty
-                  ? Container(
-                      width: 0,
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.black,
-                      ),
-                      onPressed: () => controller.clear(),
-                    ),
-            ),
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.done,
-            style: const TextStyle(color: Colors.black, fontSize: 20),
-          ),
-        ),
-      );
-
   // button widget
   Widget buildButton(String label) => SizedBox(
         height: 70,
@@ -158,11 +135,13 @@ class _AddScheduleState extends State<EditSchedulePage> {
             onPressed: () {
               updateSchedule(
                   schedNameController.text.trim(),
-                  newDaysSelected.join(""),
+                  newDaysSelected.isEmpty
+                      ? oldDaysSelected.join("")
+                      : newDaysSelected.join(""),
                   detailsController.text.trim(),
                   durationController.text.trim(),
                   doctorController.text.trim(),
-                  time);
+                  updatedTime);
               daysSelected.clear();
               Navigator.pop(context);
             },
@@ -197,7 +176,37 @@ class _AddScheduleState extends State<EditSchedulePage> {
             Row(
               children: <Widget>[
                 buildText("Name:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                buildName(schedNameController, sched!.schedName.toString()),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: SizedBox(
+                    width: 260,
+                    child: TextFormField(
+                      controller: schedNameController = TextEditingController(
+                          text: sched!.schedName.toString()),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        // labelText: 'Name of product / expenses',
+                        labelStyle: const TextStyle(color: Colors.black),
+                        suffixIcon: schedNameController.text.isEmpty
+                            ? Container(
+                                width: 0,
+                              )
+                            : IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () => schedNameController.clear(),
+                              ),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                  ),
+                )
               ],
             ),
             // Details
@@ -205,7 +214,36 @@ class _AddScheduleState extends State<EditSchedulePage> {
               children: <Widget>[
                 buildText(
                     "Details:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                buildName(detailsController, sched.details.toString()),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: SizedBox(
+                    width: 260,
+                    child: TextFormField(
+                      controller: detailsController =
+                          TextEditingController(text: sched.details.toString()),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
+                        suffixIcon: detailsController.text.isEmpty
+                            ? Container(
+                                width: 0,
+                              )
+                            : IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () => detailsController.clear(),
+                              ),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                  ),
+                )
               ],
             ),
             //Duration
@@ -213,7 +251,36 @@ class _AddScheduleState extends State<EditSchedulePage> {
               children: <Widget>[
                 buildText(
                     "Duration:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                buildName(durationController, sched.duration.toString()),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: SizedBox(
+                    width: 260,
+                    child: TextFormField(
+                      controller: durationController = TextEditingController(
+                          text: sched.duration.toString()),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
+                        suffixIcon: durationController.text.isEmpty
+                            ? Container(
+                                width: 0,
+                              )
+                            : IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () => durationController.clear(),
+                              ),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: 6),
@@ -256,14 +323,28 @@ class _AddScheduleState extends State<EditSchedulePage> {
                     // cancel = do nothing
                     if (newTime == null) return;
                     // ok = save
-                    setState(() => newTime = time);
+                    setState(() {
+                      time = newTime;
+                      updatedTime = time;
+                      timeChanged = true;
+                    });
+                    print("updated time");
+                    print(updatedTime);
                   },
                   child: Row(
                     children: [
                       Text(
-                        time.hour > 12
-                            ? '${(time.hour - 12).toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
-                            : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                        !timeChanged
+                            ? time.hour > 12
+                                ? '${(time.hour - 12).toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+                                : time.hour == 00
+                                    ? '12:${time.minute.toString().padLeft(2, '0')}'
+                                    : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+                            : updatedTime.hour > 12
+                                ? '${(updatedTime.hour - 12).toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}'
+                                : updatedTime.hour == 00
+                                    ? '12:${time.minute.toString().padLeft(2, '0')}'
+                                    : '${updatedTime.hour.toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}',
                         style: GoogleFonts.amaticSc(textStyle: titleFont),
                       ),
                       Text(
@@ -293,15 +374,43 @@ class _AddScheduleState extends State<EditSchedulePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
             // Sound
-            buildText("Sound:", GoogleFonts.amaticSc(textStyle: titleFont)),
+            buildText("Sound", GoogleFonts.amaticSc(textStyle: titleFont)),
             //Day Scheduler
             Row(
               children: <Widget>[
                 buildText(
                     "Doctor: ", GoogleFonts.amaticSc(textStyle: titleFont)),
-                buildName(doctorController, sched.doctorName.toString()),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: SizedBox(
+                    width: 260,
+                    child: TextFormField(
+                      controller: doctorController = TextEditingController(
+                          text: sched.doctorName.toString()),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
+                        hintStyle: const TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
+                        suffixIcon: doctorController.text.isEmpty
+                            ? Container(
+                                width: 0,
+                              )
+                            : IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () => doctorController.clear(),
+                              ),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: 24),
@@ -361,7 +470,7 @@ class _AddScheduleState extends State<EditSchedulePage> {
 
                   time = recordTime;
                   getDays(scheduleData.schedDate);
-                  print(daysSelected);
+                  print("recorded Days:" + daysSelected.toString());
                   return buildSched(scheduleData);
                 } else {
                   return Center(

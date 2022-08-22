@@ -53,7 +53,7 @@ class _MyWidgetState extends State<SchedulePage> {
                 .collection('patients')
                 .doc(widget.name)
                 .collection("schedules")
-                .doc(sched.schedName);
+                .doc(sched.id);
             docSched.delete();
           });
 
@@ -82,7 +82,7 @@ class _MyWidgetState extends State<SchedulePage> {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => EditSchedulePage(
                         name: widget.name,
-                        schedName: sched.schedName,
+                        schedId: sched.id,
                       )));
             });
           },
@@ -204,7 +204,7 @@ class _MyWidgetState extends State<SchedulePage> {
                   );
                 }
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return Center(child: Lottie.asset("assets/loading02.json"));
               }
             },
           ),

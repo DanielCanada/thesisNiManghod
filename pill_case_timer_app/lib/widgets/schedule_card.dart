@@ -50,7 +50,9 @@ class ScheduleCard extends StatelessWidget {
                 Text(
                   alarmTime.hour > 12
                       ? '${(alarmTime.hour - 12).toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}'
-                      : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
+                      : alarmTime.hour == 00
+                          ? '12:${alarmTime.minute.toString().padLeft(2, '0')}'
+                          : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
                   style: GoogleFonts.amaticSc(textStyle: titleFont),
                 ),
                 Text(
