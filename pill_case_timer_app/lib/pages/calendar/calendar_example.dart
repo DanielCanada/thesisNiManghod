@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../utils.dart';
 
 class TableEventsExample extends StatefulWidget {
+  const TableEventsExample({Key? key}) : super(key: key);
+
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
 }
@@ -43,8 +45,11 @@ class _TableEventsExampleState extends State<TableEventsExample> {
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example
-    return kEvents[day] ?? [];
+    if (day.weekday == DateTime.monday) {
+      return [Event('Cyclic event')];
+    }
+
+    return [];
   }
 
   List<Event> _getEventsForRange(DateTime start, DateTime end) {
@@ -94,7 +99,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              backgroundColor: Colors.white70,
+              backgroundColor: Colors.white,
               title: Text("Add Events"),
               content: TextField(
                 controller: _eventController,
@@ -143,9 +148,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
             rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: CalendarStyle(
-              // Use `CalendarStyle` to customize the UI
-
+            calendarStyle: const CalendarStyle(
               outsideDaysVisible: false,
             ),
             onDaySelected: _onDaySelected,
@@ -161,25 +164,6 @@ class _TableEventsExampleState extends State<TableEventsExample> {
               _focusedDay = focusedDay;
             },
           ),
-          ..._selectedEvents2.map((event) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 20,
-                  width: MediaQuery.of(context).size.width / 2,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey)),
-                  child: Center(
-                      child: Text(
-                    event,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                  )),
-                ),
-              )),
           const SizedBox(height: 8.0),
           Expanded(
             child: ValueListenableBuilder<List<Event>>(
