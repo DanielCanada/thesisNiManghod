@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pill_case_timer_app/pages/login_pages/auth_change_page.dart';
+import 'package:pill_case_timer_app/pages/initial_main_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/first_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/second_page.dart';
 import 'package:pill_case_timer_app/pages/onBoarding%20pages/third_page.dart';
@@ -74,7 +74,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => const AuthPage()));
+                                    builder: (context) =>
+                                        const InitialMainPage()));
                           },
                           child: Text(
                             "Done",

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pill_case_timer_app/pages/main_page.dart';
 
 class SignupPage extends StatefulWidget {
   final VoidCallback showLoginPage;

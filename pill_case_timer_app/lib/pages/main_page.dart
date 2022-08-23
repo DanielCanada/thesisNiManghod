@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
+import 'package:pill_case_timer_app/pages/calendar/show_calendar.dart';
 import 'package:pill_case_timer_app/pages/log_page.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/about.dart';
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
               } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const UnderDevelopment()));
+                    builder: (context) => const CalendarPage()));
               } else {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(
