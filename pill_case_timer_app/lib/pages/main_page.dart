@@ -32,10 +32,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // button widget - diri lang edit kung ano ang gusto niyo nga button
   Widget buildButton(String label) => SizedBox(
-        height: 70,
+        height: 60,
         width: 140,
         child: Padding(
-          padding: const EdgeInsets.only(top: 12.0, bottom: 5.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: TextButton(
             onPressed: () {
               if (label == 'Schedule') {
@@ -50,8 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     builder: (context) => const CalendarPage()));
               } else {
                 debugPrint('$label Clicked');
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const AboutPage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const UnderDevelopment()));
               }
             },
             style: ButtonStyle(
@@ -69,6 +69,53 @@ class _MyHomePageState extends State<MyHomePage> {
                 textStyle: buttonFont,
               ),
             ),
+          ),
+        ),
+      );
+
+  Widget buildSettingsIcon() => SizedBox(
+        height: 60,
+        width: 66,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: TextButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const AboutPage()));
+            },
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                    side: const BorderSide(width: 4.0, color: Colors.black),
+                    borderRadius: BorderRadius.circular(0)),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 132, 145, 218)),
+            ),
+            child: const Icon(Icons.settings, color: Colors.black),
+          ),
+        ),
+      );
+
+  Widget buildSignOutIcon() => SizedBox(
+        height: 60,
+        width: 66,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: TextButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                    side: const BorderSide(width: 4.0, color: Colors.black),
+                    borderRadius: BorderRadius.circular(0)),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(255, 132, 145, 218)),
+            ),
+            child: const Icon(Icons.logout_outlined, color: Colors.black),
           ),
         ),
       );
@@ -105,14 +152,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   const SizedBox(height: 10),
                   // schedule button
-                  buildButton("Schedule"),
+                  buildButton("Schedules"),
                   // Log button
                   buildButton("Logs"),
-                  // Settings button
-                  buildButton("About"),
+                  // Containers button
+                  buildButton("Containers"),
+                  // settings and signout?
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Settings button
+                      buildSettingsIcon(),
+                      const SizedBox(width: 10),
+                      // Settings button
+                      buildSignOutIcon(),
+                    ],
+                  ),
                   // button decoration including image and version #
                   Container(
-                    alignment: const Alignment(0, 0.80),
+                    alignment: const Alignment(0, 0.9),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row(
@@ -128,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             // ignore: prefer_const_literals_to_create_immutables
                             children: [
-                              const SizedBox(height: 40),
+                              const SizedBox(height: 50),
                               Text(
                                 "Welcome!",
                                 style: GoogleFonts.amaticSc(
@@ -139,18 +198,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 name[0],
                                 style: GoogleFonts.amaticSc(
                                   textStyle: buttonFont,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              GestureDetector(
-                                onTap: () {
-                                  FirebaseAuth.instance.signOut();
-                                },
-                                child: Text(
-                                  "Sign Out?",
-                                  style: GoogleFonts.amaticSc(
-                                    textStyle: versionFont,
-                                  ),
                                 ),
                               ),
                             ],

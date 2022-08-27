@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:flutter/material.dart';
+import 'package:pill_case_timer_app/pages/calendar/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-import '../../utils.dart';
 
 class TableEventsExample extends StatefulWidget {
   const TableEventsExample({Key? key}) : super(key: key);
@@ -33,7 +32,6 @@ class _TableEventsExampleState extends State<TableEventsExample> {
 
     _events = {};
     _selectedEvents2 = [];
-
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }

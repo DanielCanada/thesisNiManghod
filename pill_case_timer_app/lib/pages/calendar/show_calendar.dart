@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_calendar/flutter_advanced_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_example.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _MyHomePageState extends State<CalendarPage> {
             child: const Text('Events'),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => TableEventsExample()),
+              MaterialPageRoute(builder: (_) => Calendar()),
             ),
           ),
           const SizedBox(height: 20.0),

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:day_night_time_picker/lib/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:day_picker/day_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 
 class EditSchedulePage extends StatefulWidget {
   final String name;
@@ -167,6 +169,64 @@ class _AddScheduleState extends State<EditSchedulePage> {
         style: textStyle,
       );
 
+  void onTimeChanged(TimeOfDay newTime) {
+    setState(() {
+      time = newTime;
+      updatedTime = time;
+      timeChanged = true;
+    });
+  }
+
+  Widget timePicker() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                showPicker(
+                  context: context,
+                  value: time,
+                  onChange: onTimeChanged,
+                  minuteInterval: MinuteInterval.ONE,
+                  // Optional onChange to receive value as DateTime
+                  onChangeDateTime: (DateTime dateTime) {
+                    // print(dateTime);
+                    debugPrint("[debug datetime]:  $dateTime");
+                  },
+                ),
+              );
+            },
+            child: Row(
+              children: [
+                Text(
+                  'START:  ',
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
+                Text(
+                  !timeChanged
+                      ? time.hour > 12
+                          ? '${(time.hour - 12).toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+                          : time.hour == 00
+                              ? '12:${time.minute.toString().padLeft(2, '0')}'
+                              : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+                      : updatedTime.hour > 12
+                          ? '${(updatedTime.hour - 12).toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}'
+                          : updatedTime.hour == 00
+                              ? '12:${time.minute.toString().padLeft(2, '0')}'
+                              : '${updatedTime.hour.toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}',
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
+                Text(
+                  time.hour > 11 ? 'pm' : 'am',
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+
   Widget buildSched(Schedule? sched) => Container(
         padding: const EdgeInsets.only(left: 30, right: 30.0, bottom: 10),
         child: Column(
@@ -311,51 +371,7 @@ class _AddScheduleState extends State<EditSchedulePage> {
               ),
             ),
             //Time Start
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildText("Start:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                TextButton(
-                  onPressed: () async {
-                    TimeOfDay? newTime = await showTimePicker(
-                        context: context, initialTime: time);
-
-                    // cancel = do nothing
-                    if (newTime == null) return;
-                    // ok = save
-                    setState(() {
-                      time = newTime;
-                      updatedTime = time;
-                      timeChanged = true;
-                    });
-                    print("updated time");
-                    print(updatedTime);
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        !timeChanged
-                            ? time.hour > 12
-                                ? '${(time.hour - 12).toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
-                                : time.hour == 00
-                                    ? '12:${time.minute.toString().padLeft(2, '0')}'
-                                    : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
-                            : updatedTime.hour > 12
-                                ? '${(updatedTime.hour - 12).toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}'
-                                : updatedTime.hour == 00
-                                    ? '12:${time.minute.toString().padLeft(2, '0')}'
-                                    : '${updatedTime.hour.toString().padLeft(2, '0')}:${updatedTime.minute.toString().padLeft(2, '0')}',
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
-                      Text(
-                        time.hour > 12 ? 'pm' : 'am',
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+            timePicker(),
             // Alarm toggler
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -28,7 +28,7 @@ class _MyWidgetState extends State<AboutPage> {
           color: Colors.black, //change your color here
         ),
         title: Text(
-          "About",
+          "Settings",
           style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
         ),
         backgroundColor: Colors.transparent,
