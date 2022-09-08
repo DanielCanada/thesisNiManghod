@@ -37,11 +37,11 @@ dependencies:
   day_picker: ^2.1.1
   intl: ^0.17.0
 
-  #images and UI
+  # images and UI
   lottie: ^1.4.1
   smooth_page_indicator: ^1.0.0+2
 
-  #calendars
+  # calendars
   table_calendar: ^3.0.6
   flutter_advanced_calendar: ^1.2.0
 
@@ -50,8 +50,20 @@ dependencies:
   # firebase database
   cloud_firestore: ^3.4.5
 
-  #storage to show onboarding
+  # torage to show onboarding
   shared_preferences: ^2.0.15
+
+  # generate pdf document
+  syncfusion_flutter_pdf: ^20.2.48
+
+  # create signature pad
+  syncfusion_flutter_signaturepad: ^20.2.48
+
+  # file path provider
+  path_provider: ^2.0.11
+
+  # open file in device 
+  open_file: ^3.2.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

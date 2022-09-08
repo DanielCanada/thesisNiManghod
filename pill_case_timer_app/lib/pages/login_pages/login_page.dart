@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(child: Lottie.asset("assets/user-profile.json")),
               ),
               Text(
-                'Hello, Welcome back!',
+                'Greetings, Welcome back!',
                 style: GoogleFonts.fjallaOne(
                   textStyle: titleFont,
                 ),

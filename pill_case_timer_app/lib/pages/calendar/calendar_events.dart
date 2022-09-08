@@ -1,6 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:pill_case_timer_app/pages/calendar/event.dart';
+import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'api/pdf_api.dart';
 
 class Calendar extends StatefulWidget {
   @override
@@ -8,13 +14,15 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  // signature
+  final keySignaturePad = GlobalKey<SfSignaturePadState>();
   late Map<DateTime, List<Event>> selectedEvents;
   CalendarFormat format = CalendarFormat.month;
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
   DateTime tempDay = DateTime(2022, 08, 29).toUtc();
 
-  TextEditingController _eventController = TextEditingController();
+  // TextEditingController _eventController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +42,6 @@ class _CalendarState extends State<Calendar> {
 
   @override
   void dispose() {
-    _eventController.dispose();
     super.dispose();
   }
 
@@ -123,49 +130,97 @@ class _CalendarState extends State<Calendar> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color.fromARGB(255, 91, 110, 219),
         onPressed: () => showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Add Event"),
-            content: TextFormField(
-              controller: _eventController,
+            backgroundColor: const Color.fromARGB(255, 91, 110, 219),
+            title: const Text("Generate PDF Report?",
+                style: TextStyle(color: Colors.white)),
+            content: SizedBox(
+              height: 280,
+              width: 300,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("If yes, kindly note with signature",
+                      style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 10),
+                  SfSignaturePad(
+                    backgroundColor: Colors.white,
+                    key: keySignaturePad,
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child:
+                    const Text("Cancel", style: TextStyle(color: Colors.red)),
                 onPressed: () => Navigator.pop(context),
               ),
               TextButton(
-                child: const Text("Ok"),
-                onPressed: () {
-                  if (_eventController.text.isEmpty) {
-                  } else {
-                    if (selectedEvents[selectedDay] != null) {
-                      selectedEvents[selectedDay]?.add(
-                        Event(title: _eventController.text),
-                      );
-                      selectedEvents[tempDay]?.add(
-                        Event(title: "New Event"),
-                      );
-                    } else {
-                      selectedEvents[selectedDay] = [
-                        Event(title: _eventController.text)
-                      ];
-                      selectedEvents[tempDay] = [Event(title: "New Event")];
-                    }
-                  }
-                  Navigator.pop(context);
-                  _eventController.clear();
-                  setState(() {});
-                  return;
-                },
+                onPressed: generatePDF,
+                child: const Text("Proceed",
+                    style: TextStyle(color: Color.fromARGB(255, 0, 255, 8))),
               ),
             ],
           ),
         ),
-        label: const Text("Add Event"),
-        icon: const Icon(Icons.add),
+        label: const Text("Generate Report"),
+        icon: const Icon(Icons.picture_as_pdf),
       ),
     );
   }
+
+  Future generatePDF() async {
+    Navigator.of(context).pop();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ));
+
+    final image = await keySignaturePad.currentState?.toImage();
+
+    final imageSignature = await image!.toByteData(format: ImageByteFormat.png);
+
+    final file = await PdfApi.generatePDF(
+        patientName: "Administrator",
+        content: 'Lorem Ipsum',
+        imageSignature: imageSignature!);
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+    await OpenFile.open(file.path);
+  }
 }
+// 
+
+
+// TextButton(
+//                 child: const Text("Proceed"),
+//                 onPressed: () {
+//                   if (_eventController.text.isEmpty) {
+//                   } else {
+//                     if (selectedEvents[selectedDay] != null) {
+//                       selectedEvents[selectedDay]?.add(
+//                         Event(title: _eventController.text),
+//                       );
+//                       selectedEvents[tempDay]?.add(
+//                         Event(title: "New Event"),
+//                       );
+//                     } else {
+//                       selectedEvents[selectedDay] = [
+//                         Event(title: _eventController.text)
+//                       ];
+//                       selectedEvents[tempDay] = [Event(title: "New Event")];
+//                     }
+//                   }
+//                   Navigator.pop(context);
+//                   _eventController.clear();
+//                   setState(() {});
+//                   return;
+//                 },
+//               ),

@@ -22,7 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<String> name = userName.split('@');
 
   // style of title
-  final titleFont = const TextStyle(fontSize: 64, fontWeight: FontWeight.bold);
+  final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
 
   final buttonFont = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.only(top: 10.0),
           child: TextButton(
             onPressed: () {
-              if (label == 'Schedule') {
+              if (label == 'Schedules') {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => SchedulePage(
