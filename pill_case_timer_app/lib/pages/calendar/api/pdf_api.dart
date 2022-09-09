@@ -14,9 +14,52 @@ class PdfApi {
     final document = PdfDocument();
     final page = document.pages.add();
 
+    drawGrid(page);
     drawSignature(patientName, content, page, imageSignature!);
 
     return saveFile(document);
+  }
+
+  static void drawGrid(PdfPage page) {
+    final grid = PdfGrid();
+    grid.columns.add(count: 5);
+
+    final headerRow = grid.headers.add(1)[0];
+    headerRow.cells[0].value = "Medicine";
+    headerRow.cells[1].value = "Description";
+    headerRow.cells[2].value = "Scheduled Dates";
+    headerRow.cells[3].value = "Scheduled Time";
+    headerRow.cells[4].value = "Doctor";
+
+    // styles
+    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(91, 110, 219));
+    headerRow.style.textBrush = PdfBrushes.white;
+    headerRow.style.font =
+        PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold);
+
+    final row = grid.rows.add();
+    row.cells[0].value = "Medicine 01";
+    row.cells[1].value = "for sickness";
+    row.cells[2].value = "date 01, date 02, date 03";
+    row.cells[3].value = "time 01";
+    row.cells[4].value = "Dr. Doctor";
+
+    for (int i = 0; i < headerRow.cells.count; i++) {
+      headerRow.cells[i].style.cellPadding =
+          PdfPaddings(bottom: 5, left: 5, top: 5, right: 5);
+    }
+
+    for (int i = 0; i < grid.rows.count; i++) {
+      final row = grid.rows[i];
+      for (int j = 0; j < row.cells.count; j++) {
+        final cell = row.cells[j];
+
+        cell.style.cellPadding =
+            PdfPaddings(bottom: 5, left: 5, top: 5, right: 5);
+      }
+    }
+
+    grid.draw(page: page, bounds: const Rect.fromLTWH(0, 169, 0, 0));
   }
 
   static void drawSignature(String patientName, String content, PdfPage page,
@@ -31,8 +74,7 @@ class PdfApi {
     final patientInfoAddress =
         "Address: Bacolod City, Negros Occidental, Philippines, 6100";
     final patientInfo01 = "Age: 22   Gender: M   Weight: 00  Height: 00  ";
-
-    page.graphics.drawString(
+    final doctorName = page.graphics.drawString(
         pdfTitle, PdfStandardFont(PdfFontFamily.helvetica, 36),
         format: PdfStringFormat(alignment: PdfTextAlignment.center),
         bounds: Rect.fromLTRB(
