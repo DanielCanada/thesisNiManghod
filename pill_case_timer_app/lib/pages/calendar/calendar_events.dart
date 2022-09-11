@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pill_case_timer_app/pages/calendar/event.dart';
@@ -8,12 +7,12 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'api/pdf_api.dart';
 
-class Calendar extends StatefulWidget {
+class LogsPage extends StatefulWidget {
   @override
-  _CalendarState createState() => _CalendarState();
+  _LogsPageState createState() => _LogsPageState();
 }
 
-class _CalendarState extends State<Calendar> {
+class _LogsPageState extends State<LogsPage> {
   // signature
   final keySignaturePad = GlobalKey<SfSignaturePadState>();
   late Map<DateTime, List<Event>> selectedEvents;
@@ -21,6 +20,16 @@ class _CalendarState extends State<Calendar> {
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
   DateTime tempDay = DateTime(2022, 08, 29).toUtc();
+
+  // text styles
+  final pageTitleFont = const TextStyle(
+      fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
+
+  final titleFont = const TextStyle(
+      fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
+
+  final bodyFont = const TextStyle(
+      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
 
   // TextEditingController _eventController = TextEditingController();
 

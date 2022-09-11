@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pill_case_timer_app/models/user_profile.dart';
 
 class SignupPage extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -24,12 +27,30 @@ class _LoginPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _ageController = TextEditingController();
+
+  // usernameindb
+  late String userName = _emailController.text;
+  late List<String> name = userName.split('@');
+
+  // gender & age
+  final List<String> genderItems = [
+    'Male',
+    'Female',
+  ];
+  String? selectedGender;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -39,6 +60,14 @@ class _LoginPageState extends State<SignupPage> {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: _emailController.text.trim(),
             password: _passwordController.text.trim());
+
+        // add user details
+        addUserDetails(
+            _firstNameController.text.trim(),
+            _lastNameController.text.trim(),
+            int.parse(_ageController.text.trim()),
+            selectedGender.toString(), // gender
+            _emailController.text.trim());
       } else {
         const passNotTheSame = SnackBar(
           backgroundColor: Colors.red,
@@ -53,6 +82,20 @@ class _LoginPageState extends State<SignupPage> {
       );
       ScaffoldMessenger.of(context).showSnackBar(invalidUser);
     }
+  }
+
+  Future addUserDetails(String firstName, String lastName, int age,
+      String gender, String email) async {
+    final docUser = FirebaseFirestore.instance.collection("users").doc(name[0]);
+
+    final newUser = UserProfile(
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        gender: gender,
+        email: email);
+
+    await docUser.set(newUser.toJson());
   }
 
   bool passwordConfirmed() {
@@ -90,13 +133,15 @@ class _LoginPageState extends State<SignupPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.only(
+                top: 20.0, bottom: 10, left: 20, right: 20),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 90, right: 90),
-                  child: Center(child: Lottie.asset("assets/create_acc.json")),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 90, right: 90),
+                //   child: Center(child: Lottie.asset("assets/create_acc.json")),
+                // ),
+                const SizedBox(height: 6),
                 Text(
                   'HELLO THERE',
                   style: GoogleFonts.fjallaOne(
@@ -112,9 +157,190 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 const SizedBox(height: 8),
 
+                // names
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'First name',
+                        style: GoogleFonts.fjallaOne(
+                          textStyle: labelFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                        controller: _firstNameController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
+                      ),
+                    ),
+                  ),
+                ),
+                //last name
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Last name',
+                        style: GoogleFonts.fjallaOne(
+                          textStyle: labelFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                        controller: _lastNameController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // age
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Age',
+                        style: GoogleFonts.fjallaOne(
+                          textStyle: labelFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                        controller: _ageController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: ''),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // gender
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Gender',
+                        style: GoogleFonts.fjallaOne(
+                          textStyle: labelFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, top: 2, right: 10, bottom: 2),
+                  child: DropdownButtonFormField2(
+                    decoration: InputDecoration(
+                      //Add isDense true and zero Padding.
+                      //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+                      isDense: false,
+                      contentPadding: EdgeInsets.zero,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                              color: Colors.deepOrange,
+                              width: 2,
+                              style: BorderStyle.solid)),
+                      //Add more decoration as you want here
+                      //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+                    ),
+                    isExpanded: true,
+                    hint: Text(
+                      'Select Your Gender...',
+                      style: GoogleFonts.fjallaOne(
+                        textStyle: labelFont,
+                      ),
+                    ),
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.deepOrange,
+                    ),
+                    iconSize: 30,
+                    buttonHeight: 50,
+                    buttonPadding: const EdgeInsets.only(left: 20, right: 10),
+                    dropdownDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    items: genderItems
+                        .map((item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: GoogleFonts.fjallaOne(
+                                  textStyle: labelFont,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select gender.';
+                      }
+                    },
+                    onChanged: (value) {
+                      //Do something when changing the item if you want.
+                      selectedGender = value.toString();
+                    },
+                    onSaved: (value) {
+                      selectedGender = value.toString();
+                    },
+                  ),
+                ),
+
                 // email
                 Padding(
-                  padding: const EdgeInsets.only(left: 18, top: 2),
+                  padding: const EdgeInsets.only(left: 10, top: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -129,7 +355,7 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -148,7 +374,7 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 // password
                 Padding(
-                  padding: const EdgeInsets.only(left: 18, top: 2),
+                  padding: const EdgeInsets.only(left: 10, top: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -163,7 +389,7 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -183,7 +409,7 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 // password
                 Padding(
-                  padding: const EdgeInsets.only(left: 18, top: 2),
+                  padding: const EdgeInsets.only(left: 10, top: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -198,7 +424,7 @@ class _LoginPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -252,70 +478,3 @@ class _LoginPageState extends State<SignupPage> {
     );
   }
 }
-
-// // names
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 18),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       Text(
-                //         'First name',
-                //         style: GoogleFonts.fjallaOne(
-                //           textStyle: labelFont,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // Padding(
-                //   padding:
-                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: Colors.grey[200],
-                //       border: Border.all(color: Colors.white),
-                //       borderRadius: BorderRadius.circular(12),
-                //     ),
-                //     child: const Padding(
-                //       padding: EdgeInsets.only(left: 10, right: 10),
-                //       child: TextField(
-                //         decoration: InputDecoration(
-                //             border: InputBorder.none, hintText: ''),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // //last name
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 18, top: 2),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       Text(
-                //         'Last name',
-                //         style: GoogleFonts.fjallaOne(
-                //           textStyle: labelFont,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // Padding(
-                //   padding:
-                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: Colors.grey[200],
-                //       border: Border.all(color: Colors.white),
-                //       borderRadius: BorderRadius.circular(12),
-                //     ),
-                //     child: const Padding(
-                //       padding: EdgeInsets.only(left: 10, right: 10),
-                //       child: TextField(
-                //         decoration: InputDecoration(
-                //             border: InputBorder.none, hintText: ''),
-                //       ),
-                //     ),
-                //   ),
-                // ),

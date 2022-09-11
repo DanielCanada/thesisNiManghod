@@ -21,7 +21,7 @@ class _MyHomePageState extends State<CalendarPage> {
             child: const Text('Events'),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => Calendar()),
+              MaterialPageRoute(builder: (_) => LogsPage()),
             ),
           ),
           const SizedBox(height: 20.0),

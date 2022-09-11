@@ -13,7 +13,7 @@ class _MyWidgetState extends State<AboutPage> {
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
 
   final titleFont = const TextStyle(
-      fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 46, fontWeight: FontWeight.bold, color: Colors.black);
 
   final bodyFont = const TextStyle(
       fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
@@ -28,7 +28,7 @@ class _MyWidgetState extends State<AboutPage> {
           color: Colors.black, //change your color here
         ),
         title: Text(
-          "Settings",
+          "Team THESIS",
           style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
         ),
         backgroundColor: Colors.transparent,
@@ -40,9 +40,11 @@ class _MyWidgetState extends State<AboutPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Thesis Application ni manghod LUL",
-                style: GoogleFonts.amaticSc(textStyle: titleFont),
+              Center(
+                child: Text(
+                  "MEET THE TEAM!",
+                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+                ),
               ),
               const SizedBox(height: 16),
               // Text(

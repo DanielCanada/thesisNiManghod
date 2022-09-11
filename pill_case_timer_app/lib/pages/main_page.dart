@@ -1,12 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
-import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
-import 'package:pill_case_timer_app/pages/calendar/show_calendar.dart';
-import 'package:pill_case_timer_app/pages/log_page.dart';
+import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
-import 'package:pill_case_timer_app/pages/about.dart';
+import 'package:pill_case_timer_app/pages/settings.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -20,6 +20,32 @@ class _MyHomePageState extends State<MyHomePage> {
   final user = FirebaseAuth.instance.currentUser!;
   late String userName = user.email.toString();
   late List<String> name = userName.split('@');
+  // Current User
+  late UserProfile currentUser;
+  bool gotUser = false;
+
+  // get user
+  Future<UserProfile?> getProfile() async {
+    final specSched =
+        FirebaseFirestore.instance.collection('users').doc(name[0]);
+
+    final snapshot = await specSched.get();
+
+    if (snapshot.exists) {
+      gotUser = true;
+      currentUser = UserProfile.fromJson(snapshot.data()!);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    getProfile().whenComplete(() {
+      setState(() {});
+    });
+    super.initState();
+  }
 
   // style of title
   final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
@@ -46,8 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         )));
               } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const CalendarPage()));
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => LogsPage()));
               } else {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(
@@ -80,8 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.only(top: 10.0),
           child: TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const AboutPage()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => SettingsPage(
+                        docName: name[0],
+                      )));
             },
             style: ButtonStyle(
               shape: MaterialStateProperty.all<OutlinedBorder>(
@@ -195,7 +223,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               Text(
-                                name[0],
+                                gotUser == false
+                                    ? "User"
+                                    : "${currentUser.firstName.toString()} ${currentUser.lastName.toString()}",
                                 style: GoogleFonts.amaticSc(
                                   textStyle: buttonFont,
                                 ),
