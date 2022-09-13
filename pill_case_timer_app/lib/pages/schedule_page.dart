@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/pages/add_schedule.dart';
@@ -189,7 +190,7 @@ class _MyWidgetState extends State<SchedulePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
-                              Icons.add_circle_outline_outlined,
+                              Iconsax.note_add,
                               color: Colors.black,
                             ),
                             const SizedBox(width: 8),

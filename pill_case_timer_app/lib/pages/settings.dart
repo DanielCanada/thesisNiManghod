@@ -55,14 +55,14 @@ class _MyWidgetState extends State<SettingsPage> {
           color: Colors.black, //change your color here
         ),
         title: Text(
-          "Settings",
+          "Profile",
           style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: FutureBuilder<UserProfile?>(
@@ -167,6 +167,10 @@ class _MyWidgetState extends State<SettingsPage> {
                           style: GoogleFonts.amaticSc(textStyle: footerFont),
                         ),
                       ),
+                      const Divider(
+                        thickness: 4,
+                        color: Colors.white,
+                      )
                     ],
                   );
                 } else {

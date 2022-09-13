@@ -486,7 +486,7 @@ class _AddScheduleState extends State<EditSchedulePage> {
 
                   time = recordTime;
                   getDays(scheduleData.schedDate);
-                  print("recorded Days:" + daysSelected.toString());
+                  debugPrint("recorded Days:$daysSelected");
                   return buildSched(scheduleData);
                 } else {
                   return Center(
