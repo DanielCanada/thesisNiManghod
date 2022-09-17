@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<String> name = userName.split('@');
   // style of title
   final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
+  final titleFont2 = const TextStyle(fontSize: 38, fontWeight: FontWeight.bold);
 
   final buttonFont = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
@@ -37,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _bottomNavIndex = 0;
   final DateTime now = DateTime.now();
+  final cardHeight = 360;
 
   // Current User
   late UserProfile currentUser;
@@ -59,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    assert(now.weekday == DateTime.saturday);
     getProfile().whenComplete(() {
       setState(() {});
     });
@@ -70,33 +73,41 @@ class _MyHomePageState extends State<MyHomePage> {
     Iconsax.document_text4,
     Iconsax.calendar_1,
     Iconsax.box,
-    Iconsax.personalcard,
+    Iconsax.profile_circle,
   ];
 
   Widget buildMainScreen(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.withOpacity(0.15),
+      backgroundColor: const Color.fromARGB(255, 148, 215, 231),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(
-                top: 16.0, left: 10, right: 10, bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildPreviewsTab(context),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildPreviewsTab(context),
+              Container(
+                width: double.infinity,
+                height:
+                    MediaQuery.of(context).size.height - cardHeight.toDouble(),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(40),
+                      topLeft: Radius.circular(40)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 24.0),
                   child: Text(
-                    "Schedules",
+                    "Today's Activities",
                     style: GoogleFonts.aBeeZee(
                       textStyle: buttonFont,
                     ),
                   ),
                 ),
-                // SchedulePage(name: name[0])
-              ],
-            ),
+              ),
+              // SchedulePage(name: name[0])
+            ],
           ),
         ),
       ),
@@ -105,18 +116,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Container buildPreviewsTab(BuildContext context) {
     return Container(
-      height: 300,
+      height: cardHeight.toDouble(),
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 148, 215, 231),
-        borderRadius: BorderRadius.circular(30),
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(255, 148, 215, 231),
       ),
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 0.0),
+            padding: const EdgeInsets.only(top: 98.0),
             child: Container(
-              height: 300,
+              height: cardHeight.toDouble(),
               width: double.infinity,
               decoration: const BoxDecoration(
                   color: Colors.transparent,
@@ -130,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 14.0),
+                  padding: const EdgeInsets.only(top: 90.0),
                   child: Column(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
@@ -141,13 +151,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ? "Good Evening,"
                                 : "Good Morning,",
                         style: GoogleFonts.amaticSc(
-                          textStyle: versionFont2,
+                          textStyle: buttonFont,
                         ),
                       ),
                       Text(
                         gotUser == false
                             ? "User"
-                            : "${currentUser.firstName.toString()} ${currentUser.lastName.toString()}!",
+                            : "${currentUser.firstName.toString()} ${currentUser.lastName.toString()}",
                         style: GoogleFonts.amaticSc(
                           textStyle: buttonFont,
                         ),
@@ -167,13 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
+
           // Row(
           //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.only(top: 50.0, left: 20),
-          //       child: Lottie.asset('assets/med_bottle_01.json',
-          //           height: 150, width: 175),
-          //     ),
+
           //     Padding(
           //       padding: const EdgeInsets.only(top: 50.0, left: 20),
           //       child: Lottie.asset('assets/list_01.json',
@@ -181,6 +188,27 @@ class _MyHomePageState extends State<MyHomePage> {
           //     ),
           //   ],
           // ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 20.0),
+                child: Text(
+                  "Pill Case Timer",
+                  style: GoogleFonts.aBeeZee(
+                    textStyle: titleFont2,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 14.0, right: 16),
+                child: Lottie.asset('assets/med_bottle_01.json',
+                    height: 50, width: 50),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -189,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bottomNavIndex == 0
+      backgroundColor: (_bottomNavIndex == 0 || _bottomNavIndex == 2)
           ? Colors.transparent
           : const Color.fromARGB(255, 37, 233, 233),
       body: IndexedStack(
@@ -203,7 +231,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ), //destination screen
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 37, 233, 233),
+        heroTag: null,
+        backgroundColor: (_bottomNavIndex == 1 ||
+                _bottomNavIndex == 3 ||
+                _bottomNavIndex == 4)
+            ? Colors.white
+            : const Color.fromARGB(255, 37, 233, 233),
         child: const Icon(
           Iconsax.logout_1,
           color: Colors.black,

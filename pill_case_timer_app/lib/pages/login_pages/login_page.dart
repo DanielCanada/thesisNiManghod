@@ -112,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextField(
                       controller: _emailController,
                       decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: 'Email'),
+                          border: InputBorder.none,
+                          hintText: 'youremail@domain.com'),
                     ),
                   ),
                 ),
@@ -148,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                       controller: _passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: '**********'),
+                          border: InputBorder.none, hintText: '********'),
                     ),
                   ),
                 ),

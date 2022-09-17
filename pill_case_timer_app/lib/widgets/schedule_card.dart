@@ -56,7 +56,7 @@ class ScheduleCard extends StatelessWidget {
                   style: GoogleFonts.amaticSc(textStyle: titleFont),
                 ),
                 Text(
-                  alarmTime.hour > 12 ? 'pm' : 'am',
+                  alarmTime.hour > 11 ? 'pm' : 'am',
                   style: GoogleFonts.amaticSc(textStyle: titleFont),
                 ),
               ],

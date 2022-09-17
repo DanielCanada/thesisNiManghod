@@ -146,7 +146,7 @@ class _MyWidgetState extends State<SchedulePage> {
             color: Colors.black, //change your color here
           ),
           title: Text(
-            "Schedule",
+            "Schedules",
             style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
           ),
           backgroundColor: Colors.transparent,

@@ -295,7 +295,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   // Details
                   Row(
                     children: <Widget>[
-                      buildText("Details:",
+                      buildText("Purpose:",
                           GoogleFonts.amaticSc(textStyle: titleFont)),
                       buildName(detailsController),
                     ],
