@@ -102,210 +102,218 @@ class _MyWidgetState extends State<SettingsPage> {
     return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Edit Profile",
-                  style: GoogleFonts.amaticSc(textStyle: titleFont),
+          return Stack(
+            children: [
+              Lottie.asset('assets/sparkles_01.json', fit: BoxFit.contain),
+              AlertDialog(
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Edit Profile",
+                      style: GoogleFonts.amaticSc(textStyle: titleFont),
+                    ),
+                    const Divider(
+                      thickness: 1,
+                      color: Colors.black,
+                    ),
+                  ],
                 ),
-                const Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                ),
-              ],
-            ),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  // First Name
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: TextFormField(
-                        style: GoogleFonts.amaticSc(textStyle: titleFont),
-                        controller: firstNameController = TextEditingController(
-                            text: user!.firstName.toString()),
-                        decoration: InputDecoration(
-                            suffixIcon: firstNameController.text.isEmpty
-                                ? Container(
-                                    width: 0,
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.only(top: 26.0),
-                                    child: IconButton(
-                                        icon: const Icon(
-                                          Iconsax.close_square,
-                                          color: Colors.red,
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      // First Name
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: TextFormField(
+                            style: GoogleFonts.amaticSc(textStyle: titleFont),
+                            controller: firstNameController =
+                                TextEditingController(
+                                    text: user!.firstName.toString()),
+                            decoration: InputDecoration(
+                                suffixIcon: firstNameController.text.isEmpty
+                                    ? Container(
+                                        width: 0,
+                                      )
+                                    : Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 26.0),
+                                        child: IconButton(
+                                            icon: const Icon(
+                                              Iconsax.close_square,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              firstNameController.clear();
+                                            }),
+                                      ),
+                                border: InputBorder.none,
+                                hintText: '',
+                                labelText: "First Name:"),
+                          ),
+                        ),
+                      ),
+                      // last Name
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: TextFormField(
+                          style: GoogleFonts.amaticSc(textStyle: titleFont),
+                          controller: lastNameController =
+                              TextEditingController(
+                                  text: user.lastName.toString()),
+                          decoration: InputDecoration(
+                              suffixIcon: lastNameController.text.isEmpty
+                                  ? Container(
+                                      width: 0,
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 26.0),
+                                      child: IconButton(
+                                          icon: const Icon(
+                                            Iconsax.close_square,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            lastNameController.clear();
+                                          }),
+                                    ),
+                              border: InputBorder.none,
+                              hintText: '',
+                              labelText: "Last Name:"),
+                        ),
+                      ),
+                      // age
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: TextFormField(
+                          style: GoogleFonts.amaticSc(textStyle: titleFont),
+                          controller: ageController =
+                              TextEditingController(text: user.age.toString()),
+                          decoration: InputDecoration(
+                              suffixIcon: ageController.text.isEmpty
+                                  ? Container(
+                                      width: 0,
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 26.0),
+                                      child: IconButton(
+                                          icon: const Icon(
+                                            Iconsax.close_square,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            ageController.clear();
+                                          }),
+                                    ),
+                              border: InputBorder.none,
+                              hintText: '',
+                              labelText: "Age:"),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "  Gender:",
+                              style: GoogleFonts.amaticSc(
+                                textStyle: bodyFont,
+                              ),
+                            ),
+                            DropdownButtonFormField2(
+                              decoration: InputDecoration(
+                                //Add isDense true and zero Padding.
+                                //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+                                isDense: false,
+                                contentPadding: EdgeInsets.zero,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                        color: Colors.deepOrange,
+                                        width: 2,
+                                        style: BorderStyle.solid)),
+                                //Add more decoration as you want here
+                                //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+                              ),
+                              isExpanded: true,
+                              hint: Text(
+                                user.gender.toString(),
+                                style: GoogleFonts.amaticSc(
+                                  textStyle: bodyFont,
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.deepOrange,
+                              ),
+                              iconSize: 30,
+                              buttonHeight: 50,
+                              buttonPadding:
+                                  const EdgeInsets.only(left: 20, right: 10),
+                              dropdownDecoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              items: genderItems
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: GoogleFonts.amaticSc(
+                                            textStyle: bodyFont,
+                                          ),
                                         ),
-                                        onPressed: () {
-                                          firstNameController.clear();
-                                        }),
-                                  ),
-                            border: InputBorder.none,
-                            hintText: '',
-                            labelText: "First Name:"),
+                                      ))
+                                  .toList(),
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Please select gender.';
+                                }
+                              },
+                              onChanged: (value) {
+                                //Do something when changing the item if you want.
+                                selectedGender = value.toString();
+                                newGender == true;
+                              },
+                              onSaved: (value) {
+                                selectedGender = value.toString();
+                                newGender == true;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      "Cancel",
+                      style: GoogleFonts.amaticSc(
+                        textStyle: buttonFont(1),
                       ),
                     ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
-                  // last Name
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: TextFormField(
-                      style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      controller: lastNameController =
-                          TextEditingController(text: user.lastName.toString()),
-                      decoration: InputDecoration(
-                          suffixIcon: lastNameController.text.isEmpty
-                              ? Container(
-                                  width: 0,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 26.0),
-                                  child: IconButton(
-                                      icon: const Icon(
-                                        Iconsax.close_square,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        lastNameController.clear();
-                                      }),
-                                ),
-                          border: InputBorder.none,
-                          hintText: '',
-                          labelText: "Last Name:"),
+                  TextButton(
+                    child: Text(
+                      "Save",
+                      style: GoogleFonts.amaticSc(
+                        textStyle: buttonFont(0),
+                      ),
                     ),
-                  ),
-                  // age
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: TextFormField(
-                      style: GoogleFonts.amaticSc(textStyle: titleFont),
-                      controller: ageController =
-                          TextEditingController(text: user.age.toString()),
-                      decoration: InputDecoration(
-                          suffixIcon: ageController.text.isEmpty
-                              ? Container(
-                                  width: 0,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 26.0),
-                                  child: IconButton(
-                                      icon: const Icon(
-                                        Iconsax.close_square,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        ageController.clear();
-                                      }),
-                                ),
-                          border: InputBorder.none,
-                          hintText: '',
-                          labelText: "Age:"),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "  Gender:",
-                          style: GoogleFonts.amaticSc(
-                            textStyle: bodyFont,
-                          ),
-                        ),
-                        DropdownButtonFormField2(
-                          decoration: InputDecoration(
-                            //Add isDense true and zero Padding.
-                            //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
-                            isDense: false,
-                            contentPadding: EdgeInsets.zero,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                    color: Colors.deepOrange,
-                                    width: 2,
-                                    style: BorderStyle.solid)),
-                            //Add more decoration as you want here
-                            //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
-                          ),
-                          isExpanded: true,
-                          hint: Text(
-                            user.gender.toString(),
-                            style: GoogleFonts.amaticSc(
-                              textStyle: bodyFont,
-                            ),
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.deepOrange,
-                          ),
-                          iconSize: 30,
-                          buttonHeight: 50,
-                          buttonPadding:
-                              const EdgeInsets.only(left: 20, right: 10),
-                          dropdownDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          items: genderItems
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: GoogleFonts.amaticSc(
-                                        textStyle: bodyFont,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select gender.';
-                            }
-                          },
-                          onChanged: (value) {
-                            //Do something when changing the item if you want.
-                            selectedGender = value.toString();
-                            newGender == true;
-                          },
-                          onSaved: (value) {
-                            selectedGender = value.toString();
-                            newGender == true;
-                          },
-                        ),
-                      ],
-                    ),
+                    onPressed: () {
+                      updateUserProfile(firstNameController.text.trim(),
+                          lastNameController.text.trim(), user);
+                    },
                   ),
                 ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  "Cancel",
-                  style: GoogleFonts.amaticSc(
-                    textStyle: buttonFont(1),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text(
-                  "Save",
-                  style: GoogleFonts.amaticSc(
-                    textStyle: buttonFont(0),
-                  ),
-                ),
-                onPressed: () {
-                  updateUserProfile(firstNameController.text.trim(),
-                      lastNameController.text.trim(), user);
-                },
               ),
             ],
           );

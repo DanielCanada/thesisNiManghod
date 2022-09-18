@@ -12,6 +12,7 @@ import 'package:pill_case_timer_app/pages/main_screen.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pill_case_timer_app/widgets/today_card.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -38,33 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _bottomNavIndex = 0;
   final DateTime now = DateTime.now();
-  final cardHeight = 360;
-
-  // Current User
-  late UserProfile currentUser;
-  bool gotUser = false;
-
-  // get user
-  Future<UserProfile?> getProfile() async {
-    final specSched =
-        FirebaseFirestore.instance.collection('users').doc(name[0]);
-
-    final snapshot = await specSched.get();
-
-    if (snapshot.exists) {
-      gotUser = true;
-      currentUser = UserProfile.fromJson(snapshot.data()!);
-    } else {
-      return null;
-    }
-  }
+  final cardHeight = 320;
 
   @override
   void initState() {
-    assert(now.weekday == DateTime.saturday);
-    getProfile().whenComplete(() {
-      setState(() {});
-    });
+    assert(now.weekday == DateTime.sunday);
     super.initState();
   }
 
@@ -96,13 +75,30 @@ class _MyHomePageState extends State<MyHomePage> {
                       topLeft: Radius.circular(40)),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 24.0),
-                  child: Text(
-                    "Today's Activities",
-                    style: GoogleFonts.aBeeZee(
-                      textStyle: buttonFont,
-                    ),
+                  padding: const EdgeInsets.all(22.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Today's Activities",
+                        style: GoogleFonts.aBeeZee(
+                          textStyle: buttonFont,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              child: TodayCard(),
+                            );
+                          },
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -124,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 98.0),
+            padding: const EdgeInsets.only(top: 90.0),
             child: Container(
               height: cardHeight.toDouble(),
               width: double.infinity,
@@ -140,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 90.0),
+                  padding: const EdgeInsets.only(top: 82.0),
                   child: Column(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [
@@ -154,19 +150,36 @@ class _MyHomePageState extends State<MyHomePage> {
                           textStyle: buttonFont,
                         ),
                       ),
-                      Text(
-                        gotUser == false
-                            ? "User"
-                            : "${currentUser.firstName.toString()} ${currentUser.lastName.toString()}",
-                        style: GoogleFonts.amaticSc(
-                          textStyle: buttonFont,
-                        ),
-                      ),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(name[0])
+                              .snapshots(),
+                          builder: (context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Text(
+                                "Guest",
+                                style: GoogleFonts.aBeeZee(
+                                  textStyle: buttonFont,
+                                ),
+                              );
+                            }
+                            var userDocument = snapshot.data;
+                            return Text(
+                              userDocument!["firstName"] +
+                                  " " +
+                                  userDocument["lastName"],
+                              style: GoogleFonts.amaticSc(
+                                textStyle: buttonFont,
+                              ),
+                            );
+                          }),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 6.0),
+                  padding: const EdgeInsets.only(top: 3.0),
                   child: Text(
                     "Have a great day!",
                     style: GoogleFonts.aBeeZee(
@@ -177,17 +190,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-
-          // Row(
-          //   children: [
-
-          //     Padding(
-          //       padding: const EdgeInsets.only(top: 50.0, left: 20),
-          //       child: Lottie.asset('assets/list_01.json',
-          //           height: 150, width: 150),
-          //     ),
-          //   ],
-          // ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -204,8 +206,55 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 14.0, right: 16),
-                child: Lottie.asset('assets/med_bottle_01.json',
-                    height: 50, width: 50),
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Stack(
+                            children: [
+                              Lottie.asset('assets/background_01.json',
+                                  fit: BoxFit.fill),
+                              Column(
+                                mainAxisSize: MainAxisSize.values.last,
+                                children: [
+                                  ListTile(
+                                    leading: new Icon(Icons.photo),
+                                    title: new Text('Photo'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: new Icon(Icons.music_note),
+                                    title: new Text('Music'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: new Icon(Icons.videocam),
+                                    title: new Text('Video'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: new Icon(Icons.share),
+                                    title: new Text('Share'),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                  child: Lottie.asset('assets/med_bottle_01.json',
+                      height: 50, width: 50),
+                ),
               ),
             ],
           ),
