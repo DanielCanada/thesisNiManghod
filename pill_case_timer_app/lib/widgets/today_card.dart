@@ -19,12 +19,13 @@ class TodayCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          color: Colors.blue[300],
+          color: const Color.fromARGB(255, 37, 233, 233),
           child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: FlutterLogo(size: 72),
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16),
+                child: Lottie.asset('assets/med_logo.json'),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

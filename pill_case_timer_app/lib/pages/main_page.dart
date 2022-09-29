@@ -12,6 +12,7 @@ import 'package:pill_case_timer_app/pages/main_screen.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pill_case_timer_app/widgets/fade_indexed_stack.dart';
 import 'package:pill_case_timer_app/widgets/today_card.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late String userName = user.email.toString();
   late List<String> name = userName.split('@');
   // style of title
-  final titleFont = const TextStyle(fontSize: 60, fontWeight: FontWeight.bold);
+  final titleFont = const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
   final titleFont2 = const TextStyle(fontSize: 38, fontWeight: FontWeight.bold);
 
   final buttonFont = const TextStyle(
@@ -36,6 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final versionFont = const TextStyle(fontSize: 12, color: Colors.black);
   final versionFont2 = const TextStyle(
       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
+  final versionFont3 = const TextStyle(
+      fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
 
   var _bottomNavIndex = 0;
   final DateTime now = DateTime.now();
@@ -43,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    assert(now.weekday == DateTime.sunday);
+    // assert(now.weekday == DateTime.monday);
     super.initState();
   }
 
@@ -91,22 +94,56 @@ class _MyHomePageState extends State<MyHomePage> {
                           itemCount: 3,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              padding: const EdgeInsets.only(bottom: 10.0),
                               child: TodayCard(),
                             );
                           },
                         ),
-                      )
+                      ),
+                      // buildEmptyActivities()
                     ],
                   ),
                 ),
               ),
-              // SchedulePage(name: name[0])
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildEmptyActivities() {
+    return Stack(
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 40.0),
+            child: Text(
+              "No scheduled meds for today.",
+              style: GoogleFonts.aBeeZee(
+                textStyle: versionFont3,
+              ),
+            ),
+          ),
+        ),
+        Center(
+            child: SizedBox(
+          height: 250,
+          width: 300,
+          child: Lottie.asset('assets/empty.json', fit: BoxFit.fill),
+        )),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 205.0),
+            child: Text(
+              "Feel free to chill!",
+              style: GoogleFonts.aBeeZee(
+                textStyle: versionFont3,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -132,64 +169,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.all(Radius.circular(20))),
             ),
           ),
-          Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 82.0),
-                  child: Column(
-                    // ignore: prefer_const_literals_to_create_immutables
-                    children: [
-                      Text(
-                        now.hour > 12
-                            ? "Good Afternoon, "
-                            : now.hour > 18
-                                ? "Good Evening,"
-                                : "Good Morning,",
-                        style: GoogleFonts.amaticSc(
-                          textStyle: buttonFont,
-                        ),
-                      ),
-                      StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(name[0])
-                              .snapshots(),
-                          builder: (context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            if (!snapshot.hasData) {
-                              return Text(
-                                "Guest",
-                                style: GoogleFonts.aBeeZee(
-                                  textStyle: buttonFont,
-                                ),
-                              );
-                            }
-                            var userDocument = snapshot.data;
-                            return Text(
-                              userDocument!["firstName"] +
-                                  " " +
-                                  userDocument["lastName"],
-                              style: GoogleFonts.amaticSc(
-                                textStyle: buttonFont,
-                              ),
-                            );
-                          }),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 3.0),
-                  child: Text(
-                    "Have a great day!",
-                    style: GoogleFonts.aBeeZee(
-                      textStyle: versionFont,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,11 +176,46 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 20.0),
-                child: Text(
-                  "Pill Case Timer",
-                  style: GoogleFonts.aBeeZee(
-                    textStyle: titleFont2,
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      (now.hour > 12 && now.hour < 18)
+                          ? "Good Afternoon"
+                          : now.hour > 18
+                              ? "Good Evening"
+                              : "Good Morning",
+                      style: GoogleFonts.aBeeZee(
+                        textStyle: titleFont2,
+                      ),
+                    ),
+                    // StreamBuilder(
+                    //     stream: FirebaseFirestore.instance
+                    //         .collection("users")
+                    //         .doc(name[0])
+                    //         .snapshots(),
+                    //     builder: (context,
+                    //         AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    //       if (!snapshot.hasData) {
+                    //         return Text(
+                    //           "Guest",
+                    //           style: GoogleFonts.aBeeZee(
+                    //             textStyle: buttonFont,
+                    //           ),
+                    //         );
+                    //       }
+                    //       var userDocument = snapshot.data;
+                    //       return Text(
+                    //         userDocument![
+                    //             "firstName"] /* +
+                    //               " " +
+                    //               userDocument["lastName"]*/
+                    //         ,
+                    //         style: GoogleFonts.aBeeZee(
+                    //           textStyle: titleFont,
+                    //         ),
+                    //       );
+                    //     }),
+                  ],
                 ),
               ),
               Padding(
@@ -233,8 +247,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   ),
                                   ListTile(
-                                    leading: new Icon(Icons.videocam),
-                                    title: new Text('Video'),
+                                    leading: const Icon(Icons.videocam),
+                                    title: const Text('Video'),
                                     onTap: () {
                                       Navigator.pop(context);
                                     },
@@ -258,6 +272,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
+          const Padding(
+            padding: EdgeInsets.only(top: 36.0, left: 40.0),
+            child: Image(
+              image: AssetImage('assets/hello_patients_01.png'),
+              height: 240,
+              width: 240,
+            ),
+          ),
         ],
       ),
     );
@@ -269,15 +291,39 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: (_bottomNavIndex == 0 || _bottomNavIndex == 2)
           ? Colors.transparent
           : const Color.fromARGB(255, 37, 233, 233),
-      body: IndexedStack(
-        index: _bottomNavIndex,
-        children: <Widget>[
-          buildMainScreen(context),
-          SchedulePage(name: name[0]),
-          LogsPage(),
-          UnderDevelopment(),
-          SettingsPage(docName: name[0])
-        ],
+      body: GestureDetector(
+        onHorizontalDragEnd: (dragEndDetails) {
+          int sensitivity = 8;
+          // Swiping in right direction.
+          if (dragEndDetails.primaryVelocity! > 0) {
+            if (_bottomNavIndex >= 1 && _bottomNavIndex <= 4) {
+              setState(() {
+                _bottomNavIndex--;
+              });
+              print(_bottomNavIndex);
+            } else {}
+          }
+
+          // Swiping in left direction.
+          else if (dragEndDetails.primaryVelocity! < 0) {
+            if (_bottomNavIndex >= 0 && _bottomNavIndex < 4) {
+              setState(() {
+                _bottomNavIndex++;
+              });
+              print(_bottomNavIndex);
+            } else {}
+          }
+        },
+        child: FadeIndexedStack(
+          index: _bottomNavIndex,
+          children: <Widget>[
+            buildMainScreen(context),
+            SchedulePage(name: name[0]),
+            LogsPage(),
+            UnderDevelopment(),
+            SettingsPage(docName: name[0])
+          ],
+        ),
       ), //destination screen
       floatingActionButton: FloatingActionButton(
         heroTag: null,
