@@ -107,13 +107,13 @@ class _AddScheduleState extends State<EditSchedulePage> {
   }
 
   late final List<DayInWeek> _days = [
-    DayInWeek("M", isSelected: isScheduled("M") ? true : false),
-    DayInWeek("T", isSelected: isScheduled("T") ? true : false),
-    DayInWeek("W", isSelected: isScheduled("W") ? true : false),
-    DayInWeek("Th", isSelected: isScheduled("Th") ? true : false),
-    DayInWeek("F", isSelected: isScheduled("F") ? true : false),
-    DayInWeek("Sa", isSelected: isScheduled("Sa") ? true : false),
-    DayInWeek("Su", isSelected: isScheduled("Su") ? true : false),
+    DayInWeek("Monday", isSelected: isScheduled("M") ? true : false),
+    DayInWeek("Tuesday", isSelected: isScheduled("T") ? true : false),
+    DayInWeek("Wednesday", isSelected: isScheduled("W") ? true : false),
+    DayInWeek("Thursday", isSelected: isScheduled("T") ? true : false),
+    DayInWeek("Friday", isSelected: isScheduled("F") ? true : false),
+    DayInWeek("Saturday", isSelected: isScheduled("Sa") ? true : false),
+    DayInWeek("Sunday", isSelected: isScheduled("Su") ? true : false),
   ];
 
   void getDays(String schedDates) {

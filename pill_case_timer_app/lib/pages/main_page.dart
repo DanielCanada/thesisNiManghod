@@ -2,9 +2,12 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
@@ -43,6 +46,17 @@ class _MyHomePageState extends State<MyHomePage> {
   var _bottomNavIndex = 0;
   final DateTime now = DateTime.now();
   final cardHeight = 320;
+
+  late String dateName = DateFormat('EEEE').format(now);
+
+  Stream<List<Schedule>> getSchedules() => FirebaseFirestore.instance
+      .collection('patients')
+      .doc(name[0])
+      .collection("schedules")
+      .orderBy("alarmTime", descending: false)
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => Schedule.fromJson(doc.data())).toList());
 
   @override
   void initState() {
@@ -90,13 +104,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       const SizedBox(height: 12),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: TodayCard(),
-                            );
+                        child: StreamBuilder<List<Schedule>>(
+                          stream: getSchedules(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return buildEmptyActivities();
+                            } else if (snapshot.hasData) {
+                              final schedules = snapshot.data!;
+                              if (schedules.isEmpty) {
+                                return buildEmptyActivities();
+                              } else {
+                                return ListView(
+                                    children:
+                                        schedules.map(buildSchedules).toList());
+                              }
+                            } else {
+                              return Center(
+                                  child: Lottie.asset("assets/loading02.json"));
+                            }
                           },
                         ),
                       ),
@@ -111,6 +136,17 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  Widget buildSchedules(Schedule sched) => sched.schedDate.contains(dateName)
+      ? Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: TodayCard(
+            label: sched.schedName,
+            alarmTime: sched.alarmTime,
+            details: sched.details,
+          ),
+        )
+      : Container();
 
   Widget buildEmptyActivities() {
     return Stack(
@@ -222,6 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.only(top: 14.0, right: 16),
                 child: GestureDetector(
                   onTap: () {
+                    debugPrint(dateName);
                     showModalBottomSheet(
                         context: context,
                         builder: (context) {

@@ -92,25 +92,25 @@ class _AddScheduleState extends State<AddSchedulePage> {
 
   final List<DayInWeek> _days = [
     DayInWeek(
-      "M",
+      "Monday",
     ),
     DayInWeek(
-      "T",
+      "Tuesday",
     ),
     DayInWeek(
-      "W",
+      "Wednesday",
     ),
     DayInWeek(
-      "Th",
+      "Thursday",
     ),
     DayInWeek(
-      "F",
+      "Friday",
     ),
     DayInWeek(
-      "Sa",
+      "Saturday",
     ),
     DayInWeek(
-      "Su",
+      "Sunday",
     ),
   ];
 

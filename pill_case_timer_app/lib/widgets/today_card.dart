@@ -4,7 +4,15 @@ import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 
 class TodayCard extends StatelessWidget {
-  TodayCard({Key? key}) : super(key: key);
+  final String label;
+  final String details;
+  final DateTime alarmTime;
+  const TodayCard(
+      {Key? key,
+      required this.label,
+      required this.alarmTime,
+      required this.details})
+      : super(key: key);
 
   final subFont = const TextStyle(fontSize: 14, color: Colors.black87);
   final titleFont = const TextStyle(
@@ -33,24 +41,36 @@ class TodayCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                     child: Text(
-                      "Event Name / Medicine",
+                      label,
                       style: GoogleFonts.aBeeZee(
                         textStyle: titleFont,
                       ),
                     ),
                   ),
                   Text(
-                    "Purpose",
+                    details,
                     style: GoogleFonts.aBeeZee(
                       textStyle: subFont,
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    "Time",
-                    style: GoogleFonts.aBeeZee(
-                      textStyle: subFont,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        alarmTime.hour > 12
+                            ? '${(alarmTime.hour - 12).toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}'
+                            : alarmTime.hour == 00
+                                ? '12:${alarmTime.minute.toString().padLeft(2, '0')}'
+                                : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
+                        style: GoogleFonts.aBeeZee(
+                          textStyle: subFont,
+                        ),
+                      ),
+                      Text(
+                        alarmTime.hour > 11 ? 'PM' : 'AM',
+                        style: GoogleFonts.aBeeZee(textStyle: subFont),
+                      ),
+                    ],
                   ),
                 ],
               ),

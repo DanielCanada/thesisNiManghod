@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ScheduleCard extends StatelessWidget {
-  const ScheduleCard(
+  ScheduleCard(
       {Key? key,
       required this.label,
       required this.schedDate,
@@ -18,8 +18,36 @@ class ScheduleCard extends StatelessWidget {
   final titleFont2 = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
 
+  final subTitleFont = const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
+
+  String _schedDates = "";
+
+  void getSchedDates() {
+    for (var i = 0; i < schedDate.length; i++) {
+      if (schedDate[i].contains("M")) {
+        _schedDates += "M";
+      } else if (schedDate[i].contains("T")) {
+        if (schedDate[i + 1].contains("h")) {
+          _schedDates += "Th";
+        } else {
+          _schedDates += "T";
+        }
+      } else if (schedDate[i].contains("W")) {
+        _schedDates += "W";
+      } else if (schedDate[i].contains("F")) {
+        _schedDates += "F";
+      } else if (schedDate[i].contains("Sa")) {
+        _schedDates += "Sa";
+      } else if (schedDate[i].contains("Su")) {
+        _schedDates += "Su";
+      } else {}
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    getSchedDates();
     return Card(
       color: const Color.fromARGB(255, 37, 233, 233),
       elevation: 0,
@@ -42,7 +70,7 @@ class ScheduleCard extends StatelessWidget {
               style: GoogleFonts.amaticSc(textStyle: titleFont),
             ),
             Text(
-              schedDate,
+              _schedDates,
               style: GoogleFonts.amaticSc(textStyle: titleFont2),
             ),
             Row(
