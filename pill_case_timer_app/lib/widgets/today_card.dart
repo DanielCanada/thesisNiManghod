@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 class TodayCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class TodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 112,
       child: Card(
           elevation: 2,
@@ -39,7 +40,7 @@ class TodayCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14.0),
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: Text(
                       label,
                       style: GoogleFonts.aBeeZee(
@@ -47,27 +48,26 @@ class TodayCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(
-                    details,
-                    style: GoogleFonts.aBeeZee(
-                      textStyle: subFont,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
                   Row(
                     children: [
+                      const Icon(Iconsax.clipboard_text,
+                          color: Colors.black, size: 20),
+                      const SizedBox(width: 4),
                       Text(
-                        alarmTime.hour > 12
-                            ? '${(alarmTime.hour - 12).toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}'
-                            : alarmTime.hour == 00
-                                ? '12:${alarmTime.minute.toString().padLeft(2, '0')}'
-                                : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
+                        details,
                         style: GoogleFonts.aBeeZee(
                           textStyle: subFont,
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Icon(Iconsax.clock, color: Colors.black, size: 20),
+                      const SizedBox(width: 4),
                       Text(
-                        alarmTime.hour > 11 ? 'PM' : 'AM',
+                        DateFormat.jm().format(alarmTime),
                         style: GoogleFonts.aBeeZee(textStyle: subFont),
                       ),
                     ],

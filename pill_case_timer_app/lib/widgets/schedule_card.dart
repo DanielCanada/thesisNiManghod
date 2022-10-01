@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class ScheduleCard extends StatelessWidget {
   ScheduleCard(
@@ -73,21 +75,9 @@ class ScheduleCard extends StatelessWidget {
               _schedDates,
               style: GoogleFonts.amaticSc(textStyle: titleFont2),
             ),
-            Row(
-              children: [
-                Text(
-                  alarmTime.hour > 12
-                      ? '${(alarmTime.hour - 12).toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}'
-                      : alarmTime.hour == 00
-                          ? '12:${alarmTime.minute.toString().padLeft(2, '0')}'
-                          : '${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
-                  style: GoogleFonts.amaticSc(textStyle: titleFont),
-                ),
-                Text(
-                  alarmTime.hour > 11 ? 'pm' : 'am',
-                  style: GoogleFonts.amaticSc(textStyle: titleFont),
-                ),
-              ],
+            Text(
+              DateFormat.jm().format(alarmTime),
+              style: GoogleFonts.amaticSc(textStyle: titleFont),
             ),
           ]),
         ),

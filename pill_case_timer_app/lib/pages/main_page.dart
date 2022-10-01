@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _bottomNavIndex = 0;
   final DateTime now = DateTime.now();
-  final cardHeight = 320;
+  final cardHeight = 360;
 
   late String dateName = DateFormat('EEEE').format(now);
 
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
             details: sched.details,
           ),
         )
-      : Container();
+      : buildEmptyActivities();
 
   Widget buildEmptyActivities() {
     return Stack(
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 90.0),
+            padding: const EdgeInsets.only(top: 130.0),
             child: Container(
               height: cardHeight.toDouble(),
               width: double.infinity,
@@ -205,112 +205,112 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.all(Radius.circular(20))),
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 20.0),
-                child: Row(
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
                     Text(
                       (now.hour > 12 && now.hour < 18)
-                          ? "Good Afternoon"
+                          ? "Good Afternoon,"
                           : now.hour > 18
-                              ? "Good Evening"
-                              : "Good Morning",
+                              ? "Good Evening,"
+                              : "Good Morning,",
                       style: GoogleFonts.aBeeZee(
-                        textStyle: titleFont2,
+                        textStyle: titleFont,
                       ),
                     ),
-                    // StreamBuilder(
-                    //     stream: FirebaseFirestore.instance
-                    //         .collection("users")
-                    //         .doc(name[0])
-                    //         .snapshots(),
-                    //     builder: (context,
-                    //         AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    //       if (!snapshot.hasData) {
-                    //         return Text(
-                    //           "Guest",
-                    //           style: GoogleFonts.aBeeZee(
-                    //             textStyle: buttonFont,
-                    //           ),
-                    //         );
-                    //       }
-                    //       var userDocument = snapshot.data;
-                    //       return Text(
-                    //         userDocument![
-                    //             "firstName"] /* +
-                    //               " " +
-                    //               userDocument["lastName"]*/
-                    //         ,
-                    //         style: GoogleFonts.aBeeZee(
-                    //           textStyle: titleFont,
-                    //         ),
-                    //       );
-                    //     }),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 14.0, right: 16),
-                child: GestureDetector(
-                  onTap: () {
-                    debugPrint(dateName);
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Stack(
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(name[0])
+                        .snapshots(),
+                    builder:
+                        (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Text(
+                          "Guest",
+                          style: GoogleFonts.aBeeZee(
+                            textStyle: buttonFont,
+                          ),
+                        );
+                      }
+                      var userDocument = snapshot.data;
+                      return Text(
+                        userDocument![
+                            "firstName"] /* +
+                              " " +
+                              userDocument["lastName"]*/
+                        ,
+                        style: GoogleFonts.aBeeZee(
+                          textStyle: titleFont2,
+                        ),
+                      );
+                    }),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+                top: 14.0, left: (MediaQuery.of(context).size.width - 50)),
+            child: GestureDetector(
+              onTap: () {
+                debugPrint(dateName);
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Stack(
+                        children: [
+                          Lottie.asset('assets/background_01.json',
+                              fit: BoxFit.fill),
+                          Column(
+                            mainAxisSize: MainAxisSize.values.last,
                             children: [
-                              Lottie.asset('assets/background_01.json',
-                                  fit: BoxFit.fill),
-                              Column(
-                                mainAxisSize: MainAxisSize.values.last,
-                                children: [
-                                  ListTile(
-                                    leading: new Icon(Icons.photo),
-                                    title: new Text('Photo'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: new Icon(Icons.music_note),
-                                    title: new Text('Music'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.videocam),
-                                    title: const Text('Video'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: new Icon(Icons.share),
-                                    title: new Text('Share'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
+                              ListTile(
+                                leading: new Icon(Icons.photo),
+                                title: new Text('Photo'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                leading: new Icon(Icons.music_note),
+                                title: new Text('Music'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.videocam),
+                                title: const Text('Video'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                leading: new Icon(Icons.share),
+                                title: new Text('Share'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
                               ),
                             ],
-                          );
-                        });
-                  },
-                  child: Lottie.asset('assets/med_bottle_01.json',
-                      height: 50, width: 50),
-                ),
-              ),
-            ],
+                          ),
+                        ],
+                      );
+                    });
+              },
+              child: Lottie.asset('assets/med_bottle_01.json',
+                  height: 40, width: 40),
+            ),
           ),
           const Padding(
-            padding: EdgeInsets.only(top: 36.0, left: 40.0),
+            padding: EdgeInsets.only(top: 76.0, left: 40.0),
             child: Image(
               image: AssetImage('assets/hello_patients_01.png'),
               height: 240,

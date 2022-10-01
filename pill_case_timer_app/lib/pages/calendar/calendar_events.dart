@@ -1,5 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pill_case_timer_app/pages/calendar/event.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
@@ -8,6 +11,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'api/pdf_api.dart';
 
 class LogsPage extends StatefulWidget {
+  const LogsPage({Key? key}) : super(key: key);
+
   @override
   _LogsPageState createState() => _LogsPageState();
 }
@@ -24,13 +29,16 @@ class _LogsPageState extends State<LogsPage> {
   // text styles
   final pageTitleFont = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
-
   final titleFont = const TextStyle(
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
-
+  final titleFontWhite = const TextStyle(
+      fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white);
+  final titleFontBlurred = const TextStyle(
+      fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black38);
   final bodyFont = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
-
+      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
+  final bodyFontW = const TextStyle(
+      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
   // TextEditingController _eventController = TextEditingController();
 
   @override
@@ -57,86 +65,125 @@ class _LogsPageState extends State<LogsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Logs"),
-      ),
-      body: Column(
-        children: [
-          TableCalendar(
-            focusedDay: selectedDay,
-            firstDay: DateTime(2022, 07, 01),
-            lastDay: DateTime(2050),
-            calendarFormat: format,
-            onFormatChanged: (CalendarFormat _format) {
-              setState(() {
-                format = _format;
-              });
-            },
-            startingDayOfWeek: StartingDayOfWeek.sunday,
-            daysOfWeekVisible: true,
-
-            //Day Changed
-            onDaySelected: (DateTime selectDay, DateTime focusDay) {
-              setState(() {
-                selectedDay = selectDay;
-                focusedDay = focusDay;
-              });
-              print(focusedDay);
-            },
-            selectedDayPredicate: (DateTime date) {
-              return isSameDay(selectedDay, date);
-            },
-
-            eventLoader: _getEventsfromDay,
-
-            //To style the Calendar
-            calendarStyle: CalendarStyle(
-              isTodayHighlighted: true,
-              selectedDecoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              selectedTextStyle: const TextStyle(color: Colors.white),
-              todayDecoration: BoxDecoration(
-                color: Colors.purpleAccent,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              defaultDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              weekendDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-            ),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: true,
-              titleCentered: true,
-              formatButtonShowsNext: false,
-              formatButtonDecoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              formatButtonTextStyle: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-          ..._getEventsfromDay(selectedDay).map(
-            (Event event) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                tileColor: Colors.blue,
-                title: Text(
-                  event.title,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: double.infinity,
+                child: Lottie.asset('assets/background_01.json',
+                    fit: BoxFit.fill)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, left: 20),
+                  child: Text(
+                    "Logs",
+                    style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: TableCalendar(
+                    focusedDay: selectedDay,
+                    firstDay: DateTime(2022, 07, 01),
+                    lastDay: DateTime(2050),
+                    calendarFormat: format,
+                    onFormatChanged: (CalendarFormat _format) {
+                      setState(() {
+                        format = _format;
+                      });
+                    },
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                    daysOfWeekVisible: true,
+
+                    //Day Changed
+                    onDaySelected: (DateTime selectDay, DateTime focusDay) {
+                      setState(() {
+                        selectedDay = selectDay;
+                        focusedDay = focusDay;
+                      });
+                      print(focusedDay);
+                    },
+                    selectedDayPredicate: (DateTime date) {
+                      return isSameDay(selectedDay, date);
+                    },
+
+                    eventLoader: _getEventsfromDay,
+
+                    //To style the Calendar
+                    calendarStyle: CalendarStyle(
+                      defaultTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFont),
+                      todayTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                      weekendTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFont),
+                      holidayTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                      outsideTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFontBlurred),
+                      isTodayHighlighted: true,
+                      selectedDecoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      selectedTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                      todayDecoration: BoxDecoration(
+                        color: Colors.purpleAccent,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      defaultDecoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      weekendDecoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      outsideDecoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    headerStyle: HeaderStyle(
+                      leftChevronIcon:
+                          const Icon(Iconsax.arrow_left_2, color: Colors.black),
+                      rightChevronIcon: const Icon(Iconsax.arrow_right_3,
+                          color: Colors.black),
+                      titleTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFont),
+                      formatButtonVisible: true,
+                      titleCentered: true,
+                      formatButtonShowsNext: false,
+                      formatButtonDecoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      formatButtonTextStyle:
+                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                    ),
+                  ),
+                ),
+                ..._getEventsfromDay(selectedDay).map(
+                  (Event event) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      tileColor: Colors.blue,
+                      title: Text(
+                        event.title,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color.fromARGB(255, 91, 110, 219),
@@ -176,7 +223,8 @@ class _LogsPageState extends State<LogsPage> {
             ],
           ),
         ),
-        label: const Text("Generate Report"),
+        label: Text("Generate Report",
+            style: GoogleFonts.aBeeZee(textStyle: bodyFontW)),
         icon: const Icon(Icons.picture_as_pdf),
       ),
     );
