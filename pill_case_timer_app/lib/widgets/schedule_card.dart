@@ -32,17 +32,19 @@ class ScheduleCard extends StatelessWidget {
       } else if (schedDate[i].contains("T")) {
         if (schedDate[i + 1].contains("h")) {
           _schedDates += "Th";
-        } else {
+        } else if (schedDate[i + 1].contains("u")) {
           _schedDates += "T";
         }
       } else if (schedDate[i].contains("W")) {
         _schedDates += "W";
       } else if (schedDate[i].contains("F")) {
         _schedDates += "F";
-      } else if (schedDate[i].contains("Sa")) {
-        _schedDates += "Sa";
-      } else if (schedDate[i].contains("Su")) {
-        _schedDates += "Su";
+      } else if (schedDate[i].contains("S")) {
+        if (schedDate[i + 1].contains("a")) {
+          _schedDates += "Sa";
+        } else if (schedDate[i + 1].contains("u")) {
+          _schedDates += "Su";
+        }
       } else {}
     }
   }

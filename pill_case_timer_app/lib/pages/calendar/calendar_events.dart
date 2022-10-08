@@ -29,6 +29,8 @@ class _LogsPageState extends State<LogsPage> {
   // text styles
   final pageTitleFont = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
+  final pageTitleFontWhite = const TextStyle(
+      fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white);
   final titleFont = const TextStyle(
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
   final titleFontWhite = const TextStyle(
@@ -71,101 +73,121 @@ class _LogsPageState extends State<LogsPage> {
             SizedBox(
                 height: MediaQuery.of(context).size.height,
                 width: double.infinity,
-                child: Lottie.asset('assets/background_01.json',
-                    fit: BoxFit.fill)),
+                child: (DateTime.now().hour > 12 && DateTime.now().hour < 18)
+                    ? Lottie.asset('assets/background_01.json',
+                        fit: BoxFit.fill)
+                    : DateTime.now().hour > 18
+                        ? Lottie.asset('assets/b_early_morning.json',
+                            fit: BoxFit.fill)
+                        : Lottie.asset('assets/b_night.json',
+                            fit: BoxFit.fill)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, left: 20),
-                  child: Text(
-                    "Logs",
-                    style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
-                  ),
-                ),
+                DateTime.now().hour > 18
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 10.0, left: 20),
+                        child: Text(
+                          "Logs",
+                          style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 10.0, left: 20),
+                        child: Text(
+                          "Logs",
+                          style: GoogleFonts.amaticSc(
+                              textStyle: pageTitleFontWhite),
+                        ),
+                      ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TableCalendar(
-                    focusedDay: selectedDay,
-                    firstDay: DateTime(2022, 07, 01),
-                    lastDay: DateTime(2050),
-                    calendarFormat: format,
-                    onFormatChanged: (CalendarFormat _format) {
-                      setState(() {
-                        format = _format;
-                      });
-                    },
-                    startingDayOfWeek: StartingDayOfWeek.sunday,
-                    daysOfWeekVisible: true,
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                      child: TableCalendar(
+                        focusedDay: selectedDay,
+                        firstDay: DateTime(2022, 07, 01),
+                        lastDay: DateTime(2050),
+                        calendarFormat: format,
+                        onFormatChanged: (CalendarFormat _format) {
+                          setState(() {
+                            format = _format;
+                          });
+                        },
+                        startingDayOfWeek: StartingDayOfWeek.sunday,
+                        daysOfWeekVisible: true,
 
-                    //Day Changed
-                    onDaySelected: (DateTime selectDay, DateTime focusDay) {
-                      setState(() {
-                        selectedDay = selectDay;
-                        focusedDay = focusDay;
-                      });
-                      print(focusedDay);
-                    },
-                    selectedDayPredicate: (DateTime date) {
-                      return isSameDay(selectedDay, date);
-                    },
+                        //Day Changed
+                        onDaySelected: (DateTime selectDay, DateTime focusDay) {
+                          setState(() {
+                            selectedDay = selectDay;
+                            focusedDay = focusDay;
+                          });
+                          print(focusedDay);
+                        },
+                        selectedDayPredicate: (DateTime date) {
+                          return isSameDay(selectedDay, date);
+                        },
 
-                    eventLoader: _getEventsfromDay,
+                        eventLoader: _getEventsfromDay,
 
-                    //To style the Calendar
-                    calendarStyle: CalendarStyle(
-                      defaultTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFont),
-                      todayTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
-                      weekendTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFont),
-                      holidayTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
-                      outsideTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFontBlurred),
-                      isTodayHighlighted: true,
-                      selectedDecoration: BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5.0),
+                        //To style the Calendar
+                        calendarStyle: CalendarStyle(
+                          defaultTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFont),
+                          todayTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                          weekendTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFont),
+                          holidayTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                          outsideTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFontBlurred),
+                          isTodayHighlighted: true,
+                          selectedDecoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          selectedTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                          todayDecoration: BoxDecoration(
+                            color: Colors.purpleAccent,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          defaultDecoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          weekendDecoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          outsideDecoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                        headerStyle: HeaderStyle(
+                          leftChevronIcon: const Icon(Iconsax.arrow_left_2,
+                              color: Colors.black),
+                          rightChevronIcon: const Icon(Iconsax.arrow_right_3,
+                              color: Colors.black),
+                          titleTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFont),
+                          formatButtonVisible: true,
+                          titleCentered: true,
+                          formatButtonShowsNext: false,
+                          formatButtonDecoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          formatButtonTextStyle:
+                              GoogleFonts.amaticSc(textStyle: titleFontWhite),
+                        ),
                       ),
-                      selectedTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
-                      todayDecoration: BoxDecoration(
-                        color: Colors.purpleAccent,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      defaultDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      weekendDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      outsideDecoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    headerStyle: HeaderStyle(
-                      leftChevronIcon:
-                          const Icon(Iconsax.arrow_left_2, color: Colors.black),
-                      rightChevronIcon: const Icon(Iconsax.arrow_right_3,
-                          color: Colors.black),
-                      titleTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFont),
-                      formatButtonVisible: true,
-                      titleCentered: true,
-                      formatButtonShowsNext: false,
-                      formatButtonDecoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      formatButtonTextStyle:
-                          GoogleFonts.amaticSc(textStyle: titleFontWhite),
                     ),
                   ),
                 ),
@@ -199,9 +221,9 @@ class _LogsPageState extends State<LogsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("If yes, kindly note with signature",
+                  const Text("If yes, kindly note with signature",
                       style: TextStyle(color: Colors.white)),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   SfSignaturePad(
                     backgroundColor: Colors.white,
                     key: keySignaturePad,

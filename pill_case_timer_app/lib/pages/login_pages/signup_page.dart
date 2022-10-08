@@ -72,6 +72,8 @@ class _LoginPageState extends State<SignupPage> {
         const passNotTheSame = SnackBar(
           backgroundColor: Colors.red,
           content: Text('Oops! Your passwords does not match'),
+          margin: EdgeInsets.all(20),
+          behavior: SnackBarBehavior.floating,
         );
         ScaffoldMessenger.of(context).showSnackBar(passNotTheSame);
       }
@@ -79,6 +81,8 @@ class _LoginPageState extends State<SignupPage> {
       const invalidUser = SnackBar(
         backgroundColor: Colors.red,
         content: Text('Oops! Kindly review your details and try again'),
+        margin: EdgeInsets.all(20),
+        behavior: SnackBarBehavior.floating,
       );
       ScaffoldMessenger.of(context).showSnackBar(invalidUser);
     }

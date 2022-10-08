@@ -96,24 +96,24 @@ class _AddScheduleState extends State<EditSchedulePage> {
 
   late List<String> newDaysSelected = [];
 
-  late List<String> oldDaysSelected = [];
+  late List<String> oldDaysSelected = []; // remaining: friday_saturday
 
   bool isScheduled(String day) {
-    if (daysSelected.contains(day)) {
+    var stringDaysSelected = daysSelected.join("");
+    if (stringDaysSelected.contains(day)) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   late final List<DayInWeek> _days = [
-    DayInWeek("Monday", isSelected: isScheduled("M") ? true : false),
-    DayInWeek("Tuesday", isSelected: isScheduled("T") ? true : false),
-    DayInWeek("Wednesday", isSelected: isScheduled("W") ? true : false),
-    DayInWeek("Thursday", isSelected: isScheduled("T") ? true : false),
-    DayInWeek("Friday", isSelected: isScheduled("F") ? true : false),
-    DayInWeek("Saturday", isSelected: isScheduled("Sa") ? true : false),
-    DayInWeek("Sunday", isSelected: isScheduled("Su") ? true : false),
+    DayInWeek("Monday", isSelected: isScheduled("Monday") ? true : false),
+    DayInWeek("Tuesday", isSelected: isScheduled("Tuesday") ? true : false),
+    DayInWeek("Wednesday", isSelected: isScheduled("Wednesday") ? true : false),
+    DayInWeek("Thursday", isSelected: isScheduled("Thursday") ? true : false),
+    DayInWeek("Friday", isSelected: isScheduled("Friday") ? true : false),
+    DayInWeek("Saturday", isSelected: isScheduled("Saturday") ? true : false),
+    DayInWeek("Sunday", isSelected: isScheduled("Sunday") ? true : false),
   ];
 
   void getDays(String schedDates) {
@@ -440,20 +440,6 @@ class _AddScheduleState extends State<EditSchedulePage> {
           ],
         ),
       );
-
-  // show when there is no input
-  void nothingToSave() {
-    const message = 'Nothing to save';
-    const snackBar = SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(fontSize: 15),
-      ),
-      backgroundColor: Colors.red,
-      duration: Duration(seconds: 1),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 
   @override
   Widget build(BuildContext context) {

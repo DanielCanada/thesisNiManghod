@@ -33,6 +33,8 @@ class _LoginPageState extends State<LoginPage> {
       const invalidUser = SnackBar(
         backgroundColor: Colors.red,
         content: Text('Account does not exist'),
+        margin: EdgeInsets.all(20),
+        behavior: SnackBarBehavior.floating,
       );
       ScaffoldMessenger.of(context).showSnackBar(invalidUser);
     }
@@ -162,6 +164,8 @@ class _LoginPageState extends State<LoginPage> {
                       const invalid = SnackBar(
                         backgroundColor: Colors.red,
                         content: Text('Please provide Log-in credentials'),
+                        margin: EdgeInsets.all(20),
+                        behavior: SnackBarBehavior.floating,
                       );
                       ScaffoldMessenger.of(context).showSnackBar(invalid);
                     } else {

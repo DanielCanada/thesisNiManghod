@@ -72,6 +72,24 @@ class _MyHomePageState extends State<MyHomePage> {
     Iconsax.profile_circle,
   ];
 
+  Widget checkForActivitiesToday(List<Schedule> schedules) {
+    List<Schedule> todayScheds = [];
+    int hasSchedule = 0;
+    for (int i = 0; i < schedules.length; i++) {
+      var element = schedules[i];
+      if (element.schedDate.contains(dateName)) {
+        hasSchedule++;
+        todayScheds.add(element);
+      }
+    }
+    if (hasSchedule == 0) {
+      return buildEmptyActivities();
+    } else {
+      return Expanded(
+          child: ListView(children: todayScheds.map(buildSchedules).toList()));
+    }
+  }
+
   Widget buildMainScreen(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 148, 215, 231),
@@ -103,27 +121,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Expanded(
-                        child: StreamBuilder<List<Schedule>>(
-                          stream: getSchedules(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
+                      StreamBuilder<List<Schedule>>(
+                        stream: getSchedules(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return buildEmptyActivities();
+                          } else if (snapshot.hasData) {
+                            final schedules = snapshot.data!;
+                            if (schedules.isEmpty) {
                               return buildEmptyActivities();
-                            } else if (snapshot.hasData) {
-                              final schedules = snapshot.data!;
-                              if (schedules.isEmpty) {
-                                return buildEmptyActivities();
-                              } else {
-                                return ListView(
-                                    children:
-                                        schedules.map(buildSchedules).toList());
-                              }
                             } else {
-                              return Center(
-                                  child: Lottie.asset("assets/loading02.json"));
+                              return checkForActivitiesToday(schedules);
                             }
-                          },
-                        ),
+                          } else {
+                            return Center(
+                                child: Lottie.asset("assets/loading02.json"));
+                          }
+                        },
                       ),
                       // buildEmptyActivities()
                     ],
@@ -137,49 +151,50 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildSchedules(Schedule sched) => sched.schedDate.contains(dateName)
-      ? Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: TodayCard(
-            label: sched.schedName,
-            alarmTime: sched.alarmTime,
-            details: sched.details,
-          ),
-        )
-      : buildEmptyActivities();
+  Widget buildSchedules(Schedule sched) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: TodayCard(
+          label: sched.schedName,
+          alarmTime: sched.alarmTime,
+          details: sched.details,
+        ),
+      );
 
   Widget buildEmptyActivities() {
-    return Stack(
-      children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 40.0),
-            child: Text(
-              "No scheduled meds for today.",
-              style: GoogleFonts.aBeeZee(
-                textStyle: versionFont3,
+    return SizedBox(
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Center(
+              child: Text(
+                "No scheduled meds for today.",
+                style: GoogleFonts.aBeeZee(
+                  textStyle: versionFont3,
+                ),
               ),
             ),
           ),
-        ),
-        Center(
-            child: SizedBox(
-          height: 250,
-          width: 300,
-          child: Lottie.asset('assets/empty.json', fit: BoxFit.fill),
-        )),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 205.0),
-            child: Text(
-              "Feel free to chill!",
-              style: GoogleFonts.aBeeZee(
-                textStyle: versionFont3,
+          Center(
+              child: SizedBox(
+            height: 250,
+            width: 300,
+            child: Lottie.asset('assets/empty.json', fit: BoxFit.fill),
+          )),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 205.0),
+              child: Text(
+                "Feel free to chill!",
+                style: GoogleFonts.aBeeZee(
+                  textStyle: versionFont3,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

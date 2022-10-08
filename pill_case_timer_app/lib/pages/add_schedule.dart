@@ -161,6 +161,8 @@ class _AddScheduleState extends State<AddSchedulePage> {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Kindly fill in the required information'),
                     backgroundColor: Colors.red,
+                    margin: EdgeInsets.all(20),
+                    behavior: SnackBarBehavior.floating,
                   ));
                 });
               } else {
@@ -244,20 +246,6 @@ class _AddScheduleState extends State<AddSchedulePage> {
     setState(() {
       time = newTime;
     });
-  }
-
-  // show when there is no input
-  void nothingToSave() {
-    const message = 'Nothing to save';
-    const snackBar = SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(fontSize: 15),
-      ),
-      backgroundColor: Colors.red,
-      duration: Duration(seconds: 1),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override

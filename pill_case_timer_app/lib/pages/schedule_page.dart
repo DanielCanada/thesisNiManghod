@@ -40,7 +40,7 @@ class _MyWidgetState extends State<SchedulePage> {
       .collection('patients')
       .doc(widget.name)
       .collection("schedules")
-      .orderBy("createdAt", descending: false)
+      .orderBy("alarmTime", descending: false)
       .snapshots()
       .map((snapshot) =>
           snapshot.docs.map((doc) => Schedule.fromJson(doc.data())).toList());
