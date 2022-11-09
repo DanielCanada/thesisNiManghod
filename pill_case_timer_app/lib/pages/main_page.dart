@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final cardHeight = 360;
 
   late String dateName = DateFormat('EEEE').format(now);
+  String genderOfUser = "";
 
   Stream<List<Schedule>> getSchedules() => FirebaseFirestore.instance
       .collection('patients')
@@ -69,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Iconsax.document_text4,
     Iconsax.calendar_1,
     Iconsax.box,
-    Iconsax.profile_circle,
   ];
 
   Widget checkForActivitiesToday(List<Schedule> schedules) {
@@ -256,6 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       }
                       var userDocument = snapshot.data;
+                      genderOfUser = snapshot.data!["gender"].toString();
                       return Text(
                         userDocument![
                             "firstName"] /* +
@@ -272,56 +273,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Padding(
             padding: EdgeInsets.only(
-                top: 14.0, left: (MediaQuery.of(context).size.width - 50)),
+                top: 14.0, left: (MediaQuery.of(context).size.width - 100)),
             child: GestureDetector(
               onTap: () {
                 debugPrint(dateName);
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return Stack(
-                        children: [
-                          Lottie.asset('assets/background_01.json',
-                              fit: BoxFit.fill),
-                          Column(
-                            mainAxisSize: MainAxisSize.values.last,
-                            children: [
-                              ListTile(
-                                leading: new Icon(Icons.photo),
-                                title: new Text('Photo'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ListTile(
-                                leading: new Icon(Icons.music_note),
-                                title: new Text('Music'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.videocam),
-                                title: const Text('Video'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ListTile(
-                                leading: new Icon(Icons.share),
-                                title: new Text('Share'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    });
+                // profile
+                setState(() {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SettingsPage(docName: name[0])));
+                });
               },
-              child: Lottie.asset('assets/med_bottle_01.json',
-                  height: 40, width: 40),
+              child: SizedBox(
+                height: 80,
+                width: 80,
+                child: genderOfUser == "Female"
+                    ? Lottie.asset('assets/female_01.json', fit: BoxFit.cover)
+                    : Lottie.asset('assets/male_01.json', fit: BoxFit.cover),
+              ),
             ),
           ),
           const Padding(
@@ -348,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int sensitivity = 8;
           // Swiping in right direction.
           if (dragEndDetails.primaryVelocity! > 0) {
-            if (_bottomNavIndex >= 1 && _bottomNavIndex <= 4) {
+            if (_bottomNavIndex >= 1 && _bottomNavIndex <= 3) {
               setState(() {
                 _bottomNavIndex--;
               });
@@ -358,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           // Swiping in left direction.
           else if (dragEndDetails.primaryVelocity! < 0) {
-            if (_bottomNavIndex >= 0 && _bottomNavIndex < 4) {
+            if (_bottomNavIndex >= 0 && _bottomNavIndex < 3) {
               setState(() {
                 _bottomNavIndex++;
               });
@@ -373,15 +341,12 @@ class _MyHomePageState extends State<MyHomePage> {
             SchedulePage(name: name[0]),
             LogsPage(),
             UnderDevelopment(),
-            SettingsPage(docName: name[0])
           ],
         ),
       ), //destination screen
       floatingActionButton: FloatingActionButton(
         heroTag: null,
-        backgroundColor: (_bottomNavIndex == 1 ||
-                _bottomNavIndex == 3 ||
-                _bottomNavIndex == 4)
+        backgroundColor: (_bottomNavIndex == 1 || _bottomNavIndex == 3)
             ? Colors.white
             : const Color.fromARGB(255, 37, 233, 233),
         child: const Icon(
@@ -407,5 +372,50 @@ class _MyHomePageState extends State<MyHomePage> {
         //other params
       ),
     );
+  }
+
+  Future buildModal() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Stack(
+            children: [
+              Lottie.asset('assets/background_01.json', fit: BoxFit.fill),
+              Column(
+                mainAxisSize: MainAxisSize.values.last,
+                children: [
+                  ListTile(
+                    leading: new Icon(Icons.photo),
+                    title: new Text('Photo'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: new Icon(Icons.music_note),
+                    title: new Text('Music'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.videocam),
+                    title: const Text('Video'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: new Icon(Icons.share),
+                    title: new Text('Share'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

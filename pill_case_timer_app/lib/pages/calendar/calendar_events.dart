@@ -84,7 +84,7 @@ class _LogsPageState extends State<LogsPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DateTime.now().hour > 18
+                DateTime.now().hour > 12
                     ? Padding(
                         padding: const EdgeInsets.only(top: 10.0, left: 20),
                         child: Text(
