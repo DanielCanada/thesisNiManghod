@@ -11,6 +11,7 @@ import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
+import 'package:pill_case_timer_app/pages/container_page/container_page.dart';
 import 'package:pill_case_timer_app/pages/main_screen.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
@@ -115,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Today's Activities",
+                        "Todays Medications",
                         style: GoogleFonts.aBeeZee(
                           textStyle: buttonFont,
                         ),
@@ -308,9 +309,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: (_bottomNavIndex == 0 || _bottomNavIndex == 2)
-          ? Colors.transparent
-          : const Color.fromARGB(255, 37, 233, 233),
+      backgroundColor:
+          (_bottomNavIndex == 0 || _bottomNavIndex == 2 || _bottomNavIndex == 3)
+              ? Colors.transparent
+              : const Color.fromARGB(255, 37, 233, 233),
       body: GestureDetector(
         onHorizontalDragEnd: (dragEndDetails) {
           int sensitivity = 8;
@@ -340,13 +342,14 @@ class _MyHomePageState extends State<MyHomePage> {
             buildMainScreen(context),
             SchedulePage(name: name[0]),
             LogsPage(),
-            UnderDevelopment(),
+            // UnderDevelopment(),
+            ContainerPage(),
           ],
         ),
       ), //destination screen
       floatingActionButton: FloatingActionButton(
         heroTag: null,
-        backgroundColor: (_bottomNavIndex == 1 || _bottomNavIndex == 3)
+        backgroundColor: (_bottomNavIndex == 1)
             ? Colors.white
             : const Color.fromARGB(255, 37, 233, 233),
         child: const Icon(
