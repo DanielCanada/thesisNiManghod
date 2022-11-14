@@ -97,7 +97,8 @@ class _LoginPageState extends State<SignupPage> {
         lastName: lastName,
         age: age,
         gender: gender,
-        email: email);
+        email: email,
+        deviceActivated: false);
 
     await docUser.set(newUser.toJson());
   }

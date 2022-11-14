@@ -77,29 +77,19 @@ class _LogsPageState extends State<LogsPage> {
                     ? Lottie.asset('assets/background_01.json',
                         fit: BoxFit.fill)
                     : DateTime.now().hour > 18
-                        ? Lottie.asset('assets/b_early_morning.json',
-                            fit: BoxFit.fill)
-                        : Lottie.asset('assets/b_night.json',
+                        ? Lottie.asset('assets/b_night.json', fit: BoxFit.fill)
+                        : Lottie.asset('assets/b_early_morning.json',
                             fit: BoxFit.fill)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DateTime.now().hour > 12
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 20),
-                        child: Text(
-                          "Logs",
-                          style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 20),
-                        child: Text(
-                          "Logs",
-                          style: GoogleFonts.amaticSc(
-                              textStyle: pageTitleFontWhite),
-                        ),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, left: 20),
+                  child: Text(
+                    "Logs",
+                    style: GoogleFonts.amaticSc(textStyle: pageTitleFont),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: ClipRect(

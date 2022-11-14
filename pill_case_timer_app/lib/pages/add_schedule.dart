@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/lib/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:day_picker/day_picker.dart';
@@ -327,7 +328,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                     children: [
                       buildText(
                           "Alarm", GoogleFonts.amaticSc(textStyle: titleFont)),
-                      Switch(
+                      CupertinoSwitch(
                         value: isSwitched,
                         onChanged: (value) {
                           setState(() {
@@ -335,8 +336,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                             print(isSwitched);
                           });
                         },
-                        activeTrackColor:
-                            const Color.fromARGB(255, 132, 145, 218),
+                        trackColor: const Color.fromARGB(255, 132, 145, 218),
                         activeColor: const Color.fromARGB(255, 0, 255, 8),
                       ),
                     ],

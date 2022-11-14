@@ -343,7 +343,9 @@ class _MyHomePageState extends State<MyHomePage> {
             SchedulePage(name: name[0]),
             LogsPage(),
             // UnderDevelopment(),
-            ContainerPage(),
+            ContainerPage(
+              docID: name[0],
+            ),
           ],
         ),
       ), //destination screen

@@ -25,10 +25,12 @@ class ContainerBox extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: powerOn ? Colors.grey[900] : Color.fromARGB(44, 164, 167, 189),
+          color: powerOn
+              ? Colors.grey[900]
+              : const Color.fromARGB(44, 164, 167, 189),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 15.0, bottom: 20),
+          padding: const EdgeInsets.only(top: 20.0, bottom: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -54,20 +56,34 @@ class ContainerBox extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 25.0),
-                      child: Text(
-                        powerOn == true ? "Drop" : "Idle",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: powerOn ? Colors.white : Colors.black,
-                        ),
-                      ),
+                      child: powerOn
+                          ? GestureDetector(
+                              onTap: () {
+                                debugPrint("1 $containerName dropped");
+                              },
+                              child: const Text(
+                                "Drop",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              "Idle",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                     ),
                   ),
                   Transform.rotate(
                     angle: pi / -2,
                     child: CupertinoSwitch(
-                      activeColor: Color.fromARGB(216, 0, 250, 250),
+                      activeColor: const Color.fromARGB(216, 0, 250, 250),
                       value: powerOn,
                       onChanged: onChanged,
                     ),
