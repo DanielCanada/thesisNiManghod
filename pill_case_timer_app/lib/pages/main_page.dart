@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   late String dateName = DateFormat('EEEE').format(now);
   String genderOfUser = "";
+  bool isChecked = false;
 
   Stream<List<Schedule>> getSchedules() => FirebaseFirestore.instance
       .collection('patients')
@@ -158,6 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
           label: sched.schedName,
           alarmTime: sched.alarmTime,
           details: sched.details,
+          isChecked: isChecked,
+          onChanged: (value) {
+            setState(() {
+              isChecked = value;
+            });
+          },
         ),
       );
 

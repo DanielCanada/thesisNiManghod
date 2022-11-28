@@ -36,6 +36,7 @@ dependencies:
   day_night_time_picker: ^1.1.2
   day_picker: ^2.1.1
   intl: ^0.17.0
+  jiffy: ^5.0.0
 
   # images and UI
   lottie: ^1.4.1
@@ -43,6 +44,8 @@ dependencies:
   dropdown_button2: ^1.7.2 # dropdown upgrade!
   animated_bottom_navigation_bar: ^1.1.0
   iconsax: ^0.0.8
+  glass_kit: ^2.0.1
+  msh_checkbox: ^1.2.1
 
   # calendars
   table_calendar: ^3.0.6

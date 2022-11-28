@@ -62,7 +62,7 @@ class ContainerBox extends StatelessWidget {
                                 debugPrint("1 $containerName dropped");
                               },
                               child: const Text(
-                                "Drop",
+                                "Active",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
