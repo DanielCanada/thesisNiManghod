@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
+import 'package:pill_case_timer_app/pages/calendar/calendar_carousel.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
@@ -72,8 +73,8 @@ class _MainSreenState extends State<MainScreen> {
                         )));
               } else if (label == 'Logs') {
                 debugPrint('$label Clicked');
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => LogsPage()));
+                //  Navigator.of(context).push(MaterialPageRoute(
+                //       builder: (context) => const NewCalendar(user)));
               } else {
                 debugPrint('$label Clicked');
                 Navigator.of(context).push(MaterialPageRoute(

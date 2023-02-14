@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/lib/constants.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,10 +29,12 @@ class _AddScheduleState extends State<EditSchedulePage> {
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
   final buttonFont = const TextStyle(
       fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
+  final bodyFont = const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
 
   // text controllers
   late TextEditingController schedNameController;
-  late TextEditingController detailsController;
+  // late TextEditingController cNumController;
   late TextEditingController durationController;
   late TextEditingController doctorController;
 
@@ -53,8 +56,18 @@ class _AddScheduleState extends State<EditSchedulePage> {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
+  // containers
+  final List<String> containerNumbers = [
+    '1',
+    '2',
+    '3',
+  ];
+  String? selectedContainer;
+  String? oldContainerNum;
+  bool updatedContainer = false;
+
   // create to firebase
-  Future updateSchedule(String schedName, String schedDate, String details,
+  Future updateSchedule(String schedName, String schedDate, String containerNum,
       String duration, String doctorName, TimeOfDay alarmTime) async {
     final docSched = FirebaseFirestore.instance
         .collection("patients")
@@ -66,7 +79,7 @@ class _AddScheduleState extends State<EditSchedulePage> {
         id: widget.schedId,
         schedName: schedName,
         schedDate: schedDate,
-        details: details,
+        containerNum: containerNum,
         duration: duration,
         doctorName: doctorName,
         alarmTime: join(DateTime.now(), alarmTime),
@@ -141,7 +154,9 @@ class _AddScheduleState extends State<EditSchedulePage> {
                   newDaysSelected.isEmpty
                       ? oldDaysSelected.join("")
                       : newDaysSelected.join(""),
-                  detailsController.text.trim(),
+                  updatedContainer
+                      ? selectedContainer!.trim()
+                      : oldContainerNum!.trim(),
                   durationController.text.trim(),
                   doctorController.text.trim(),
                   updatedTime);
@@ -168,6 +183,66 @@ class _AddScheduleState extends State<EditSchedulePage> {
   Widget buildText(String text, TextStyle textStyle) => Text(
         text,
         style: textStyle,
+      );
+
+  Widget dropDownContainerNum() => DropdownButtonFormField2(
+        decoration: InputDecoration(
+          //Add isDense true and zero Padding.
+          //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+          isDense: false,
+          contentPadding: EdgeInsets.zero,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 2,
+                  style: BorderStyle.solid)),
+          //Add more decoration as you want here
+          //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+        ),
+        isExpanded: true,
+        hint: Text(
+          oldContainerNum!,
+          style: GoogleFonts.amaticSc(
+            textStyle: bodyFont,
+          ),
+        ),
+        icon: const Icon(
+          Icons.arrow_drop_down,
+          color: Colors.deepOrange,
+        ),
+        iconSize: 30,
+        buttonHeight: 50,
+        buttonPadding: const EdgeInsets.only(left: 20, right: 10),
+        dropdownDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        items: containerNumbers
+            .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: GoogleFonts.amaticSc(
+                      textStyle: bodyFont,
+                    ),
+                  ),
+                ))
+            .toList(),
+        validator: (value) {
+          if (value == null) {
+            return 'Please select containers.';
+          }
+        },
+        onChanged: (value) {
+          //Do something when changing the item if you want.
+          selectedContainer = value.toString();
+          updatedContainer = true;
+        },
+        onSaved: (value) {
+          selectedContainer = value.toString();
+          updatedContainer = true;
+        },
       );
 
   void onTimeChanged(TimeOfDay newTime) {
@@ -228,218 +303,220 @@ class _AddScheduleState extends State<EditSchedulePage> {
         ],
       );
 
-  Widget buildSched(Schedule? sched) => Container(
-        padding: const EdgeInsets.only(left: 30, right: 30.0, bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Name:
-            Row(
-              children: <Widget>[
-                buildText("Name:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: SizedBox(
-                    width: 260,
-                    child: TextFormField(
-                      controller: schedNameController = TextEditingController(
-                          text: sched!.schedName.toString()),
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        // labelText: 'Name of product / expenses',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        suffixIcon: schedNameController.text.isEmpty
-                            ? Container(
-                                width: 0,
-                              )
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () => schedNameController.clear(),
+  Widget buildSched(Schedule? sched) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Name:
+          Row(
+            children: <Widget>[
+              buildText("Name:", GoogleFonts.amaticSc(textStyle: titleFont)),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: SizedBox(
+                  width: 260,
+                  child: TextFormField(
+                    controller: schedNameController = TextEditingController(
+                        text: sched!.schedName.toString()),
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      hintStyle: const TextStyle(color: Colors.black),
+                      // labelText: 'Name of product / expenses',
+                      labelStyle: const TextStyle(color: Colors.black),
+                      suffixIcon: schedNameController.text.isEmpty
+                          ? Container(
+                              width: 0,
+                            )
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
                               ),
-                      ),
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                              onPressed: () => schedNameController.clear(),
+                            ),
                     ),
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(color: Colors.black, fontSize: 20),
                   ),
-                )
-              ],
-            ),
-            // Details
-            Row(
-              children: <Widget>[
-                buildText(
-                    "Details:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: SizedBox(
-                    width: 260,
-                    child: TextFormField(
-                      controller: detailsController =
-                          TextEditingController(text: sched.details.toString()),
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        labelStyle: const TextStyle(color: Colors.black),
-                        suffixIcon: detailsController.text.isEmpty
-                            ? Container(
-                                width: 0,
-                              )
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () => detailsController.clear(),
-                              ),
-                      ),
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            //Duration
-            Row(
-              children: <Widget>[
-                buildText(
-                    "Duration:", GoogleFonts.amaticSc(textStyle: titleFont)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: SizedBox(
-                    width: 260,
-                    child: TextFormField(
-                      controller: durationController = TextEditingController(
-                          text: sched.duration.toString()),
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        labelStyle: const TextStyle(color: Colors.black),
-                        suffixIcon: durationController.text.isEmpty
-                            ? Container(
-                                width: 0,
-                              )
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () => durationController.clear(),
-                              ),
-                      ),
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 6),
-            //Day Scheduler
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: SelectWeekDays(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  days: _days,
-                  border: false,
-                  selectedDayTextColor: Colors.black,
-                  unSelectedDayTextColor: Colors.black,
-                  daysFillColor: const Color.fromARGB(255, 158, 169, 236),
-                  daysBorderColor: Colors.black,
-                  backgroundColor: bgColor,
-                  onSelect: (values) {
-                    if (values == daysSelected.contains(values)) {
-                      newDaysSelected.remove(values);
-                      daysSelected.remove(values);
-                    } else {
-                      newDaysSelected = values;
-                    }
-                    print(newDaysSelected);
-                  },
                 ),
-              ),
-            ),
-            //Time Start
-            timePicker(),
-            // Alarm toggler
-            Row(
+              )
+            ],
+          ),
+          // Details
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildText("Alarm", GoogleFonts.amaticSc(textStyle: titleFont)),
-                CupertinoSwitch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                      print(isSwitched);
-                    });
-                  },
-                  trackColor: const Color.fromARGB(255, 132, 145, 218),
-                  activeColor: const Color.fromARGB(255, 0, 255, 8),
-                ),
-              ],
-            ),
-            // Sound
-            buildText("Sound", GoogleFonts.amaticSc(textStyle: titleFont)),
-            //Day Scheduler
-            Row(
-              children: <Widget>[
                 buildText(
-                    "Doctor: ", GoogleFonts.amaticSc(textStyle: titleFont)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: SizedBox(
-                    width: 260,
-                    child: TextFormField(
-                      controller: doctorController = TextEditingController(
-                          text: sched.doctorName.toString()),
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        hintStyle: const TextStyle(color: Colors.black),
-                        labelStyle: const TextStyle(color: Colors.black),
-                        suffixIcon: doctorController.text.isEmpty
-                            ? Container(
-                                width: 0,
-                              )
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () => doctorController.clear(),
-                              ),
-                      ),
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                  ),
-                )
+                    "Container:", GoogleFonts.amaticSc(textStyle: titleFont)),
+                SizedBox(width: 250, child: dropDownContainerNum()),
               ],
             ),
-            const SizedBox(height: 24),
-            // Save Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildButton("update"),
-              ],
-            )
-          ],
-        ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 10.0),
+          //   child: SizedBox(
+          //     width: 260,
+          //     child: TextFormField(
+          //       controller: cNumController = TextEditingController(
+          //           text: sched.containerNum.toString()),
+          //       cursorColor: Colors.black,
+          //       decoration: InputDecoration(
+          //         border: const UnderlineInputBorder(),
+          //         hintStyle: const TextStyle(color: Colors.black),
+          //         labelStyle: const TextStyle(color: Colors.black),
+          //         suffixIcon: cNumController.text.isEmpty
+          //             ? Container(
+          //                 width: 0,
+          //               )
+          //             : IconButton(
+          //                 icon: const Icon(
+          //                   Icons.close,
+          //                   color: Colors.black,
+          //                 ),
+          //                 onPressed: () => cNumController.clear(),
+          //               ),
+          //       ),
+          //       keyboardType: TextInputType.name,
+          //       textInputAction: TextInputAction.done,
+          //       style: const TextStyle(color: Colors.black, fontSize: 20),
+          //     ),
+          //   ),
+          // ),
+          //Duration
+          Row(
+            children: <Widget>[
+              buildText(
+                  "Duration:", GoogleFonts.amaticSc(textStyle: titleFont)),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: SizedBox(
+                  width: 260,
+                  child: TextFormField(
+                    controller: durationController =
+                        TextEditingController(text: sched.duration.toString()),
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      hintStyle: const TextStyle(color: Colors.black),
+                      labelStyle: const TextStyle(color: Colors.black),
+                      suffixIcon: durationController.text.isEmpty
+                          ? Container(
+                              width: 0,
+                            )
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                              ),
+                              onPressed: () => durationController.clear(),
+                            ),
+                    ),
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(color: Colors.black, fontSize: 20),
+                  ),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 6),
+          //Day Scheduler
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: SelectWeekDays(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                days: _days,
+                border: false,
+                selectedDayTextColor: Colors.black,
+                unSelectedDayTextColor: Colors.black,
+                daysFillColor: const Color.fromARGB(255, 158, 169, 236),
+                daysBorderColor: Colors.black,
+                backgroundColor: bgColor,
+                onSelect: (values) {
+                  if (values == daysSelected.contains(values)) {
+                    newDaysSelected.remove(values);
+                    daysSelected.remove(values);
+                  } else {
+                    newDaysSelected = values;
+                  }
+                  print(newDaysSelected);
+                },
+              ),
+            ),
+          ),
+          //Time Start
+          timePicker(),
+          // Alarm toggler
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              buildText("Alarm", GoogleFonts.amaticSc(textStyle: titleFont)),
+              CupertinoSwitch(
+                value: isSwitched,
+                onChanged: (value) {
+                  setState(() {
+                    isSwitched = value;
+                    print(isSwitched);
+                  });
+                },
+                trackColor: const Color.fromARGB(255, 132, 145, 218),
+                activeColor: const Color.fromARGB(255, 0, 255, 8),
+              ),
+            ],
+          ),
+          // Sound / Notes
+          buildText("Note: ", GoogleFonts.amaticSc(textStyle: titleFont)),
+          //Day Scheduler
+          Row(
+            children: <Widget>[
+              buildText("Doctor: ", GoogleFonts.amaticSc(textStyle: titleFont)),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: SizedBox(
+                  width: 260,
+                  child: TextFormField(
+                    controller: doctorController = TextEditingController(
+                        text: sched.doctorName.toString()),
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      hintStyle: const TextStyle(color: Colors.black),
+                      labelStyle: const TextStyle(color: Colors.black),
+                      suffixIcon: doctorController.text.isEmpty
+                          ? Container(
+                              width: 0,
+                            )
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                              ),
+                              onPressed: () => doctorController.clear(),
+                            ),
+                    ),
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(color: Colors.black, fontSize: 20),
+                  ),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Save Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildButton("update"),
+            ],
+          )
+        ],
       );
 
   @override
@@ -474,7 +551,12 @@ class _AddScheduleState extends State<EditSchedulePage> {
                   time = recordTime;
                   getDays(scheduleData.schedDate);
                   debugPrint("recorded Days:$daysSelected");
-                  return buildSched(scheduleData);
+
+                  oldContainerNum = scheduleData.containerNum;
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: buildSched(scheduleData),
+                  );
                 } else {
                   return Center(
                     child: Lottie.asset("assets/loading02.json"),

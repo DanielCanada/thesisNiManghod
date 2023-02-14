@@ -9,7 +9,7 @@ import 'package:msh_checkbox/msh_checkbox.dart';
 
 class TodayCard extends StatelessWidget {
   final String label;
-  final String details;
+  final String containerNum;
   final DateTime alarmTime;
   final bool isChecked;
   void Function(bool) onChanged;
@@ -17,7 +17,7 @@ class TodayCard extends StatelessWidget {
     Key? key,
     required this.label,
     required this.alarmTime,
-    required this.details,
+    required this.containerNum,
     required this.isChecked,
     required this.onChanged,
   }) : super(key: key);
@@ -81,7 +81,7 @@ class TodayCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(vertical: 14.0),
                   child: Text(
                     label,
                     style: GoogleFonts.aBeeZee(
@@ -95,7 +95,7 @@ class TodayCard extends StatelessWidget {
                         color: Colors.black, size: 20),
                     const SizedBox(width: 4),
                     Text(
-                      details,
+                      containerNum,
                       style: GoogleFonts.aBeeZee(
                         textStyle: subFont,
                       ),
@@ -115,7 +115,7 @@ class TodayCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 56),
+            const SizedBox(width: 40),
             Padding(
               padding: const EdgeInsets.only(top: 14.0, bottom: 24),
               child: Column(

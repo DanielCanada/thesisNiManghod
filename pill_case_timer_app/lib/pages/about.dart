@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/second_screen.dart';
+import 'package:pill_case_timer_app/pages/calendar/api/notifications_api.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -9,6 +11,11 @@ class AboutPage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<AboutPage> {
+  // local notif
+
+  @override
+  void initState() {}
+
   final pageTitleFont = const TextStyle(
       fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black);
 

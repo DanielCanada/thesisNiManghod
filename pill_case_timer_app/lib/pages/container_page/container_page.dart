@@ -25,9 +25,8 @@ class _ContainerPageState extends State<ContainerPage> {
   List medContainers = [
     // [ smartDeviceName, iconPath , powerStatus ]
     ["Med 01", "assets/tablet_02.json", true],
-    ["Med 02", "assets/med_bottle_01.json", false],
-    ["Med 03", "assets/med_logo.json", false],
-    ["Med 04", "assets/pills01.json", false],
+    ["Med 02", "assets/med_bottle_01.json", true],
+    ["Med 03", "assets/med_logo.json", true],
   ];
 
   // power button switched
@@ -81,7 +80,7 @@ class _ContainerPageState extends State<ContainerPage> {
                             (error) => debugPrint('Activation failed: $error'));
 
                     // create containers upon activation
-                    for (var i = 0; i < 4; i++) {
+                    for (var i = 0; i < 3; i++) {
                       createContainers(i);
                     }
 
@@ -200,7 +199,7 @@ class _ContainerPageState extends State<ContainerPage> {
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 1 / 1.23,
+                              childAspectRatio: 1 / 1.4,
                             ),
                             children: userContainers
                                 .map((ContainerModel container) => ContainerBox(

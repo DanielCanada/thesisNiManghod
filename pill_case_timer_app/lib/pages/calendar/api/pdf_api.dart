@@ -2,20 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PdfApi {
   static Future<File> generatePDF({
-    required String patientName,
-    required String content,
+    required UserProfile user,
     required ByteData? imageSignature,
   }) async {
     final document = PdfDocument();
     final page = document.pages.add();
 
     drawGrid(page);
-    drawSignature(patientName, content, page, imageSignature!);
+    drawSignature(user, page, imageSignature!);
 
     return saveFile(document);
   }
@@ -62,19 +62,20 @@ class PdfApi {
     grid.draw(page: page, bounds: const Rect.fromLTWH(0, 169, 0, 0));
   }
 
-  static void drawSignature(String patientName, String content, PdfPage page,
-      ByteData imageSignature) {
+  static void drawSignature(
+      UserProfile user, PdfPage page, ByteData imageSignature) {
     final pageSize = page.getClientSize();
     final PdfBitmap image = PdfBitmap(imageSignature.buffer.asUint8List());
 
     final now = "Date: ${DateFormat.yMMMEd().format(DateTime.now())}";
-    final pdfTitle = 'Pill Case Timer';
-    final signatureName = "$patientName\n    Patient";
-    final patientInfoName = "Name: $patientName";
-    final patientInfoAddress =
-        "Address: Bacolod City, Negros Occidental, Philippines, 6100";
-    final patientInfo01 = "Age: 22   Gender: M   Weight: 00  Height: 00  ";
-    final doctorName = page.graphics.drawString(
+    const pdfTitle = 'Pill Case Timer';
+    final signatureName = "${user.firstName}\n    Patient";
+    final patientInfoName = "Name: ${user.firstName} ${user.lastName}";
+    final patientInfoAddress = "Email: ${user.email}";
+    final patientInfo01 = "Age: ${user.age}   Gender: ${user.gender}";
+    final doctorName = "";
+
+    page.graphics.drawString(
         pdfTitle, PdfStandardFont(PdfFontFamily.helvetica, 36),
         format: PdfStringFormat(alignment: PdfTextAlignment.center),
         bounds: Rect.fromLTRB(

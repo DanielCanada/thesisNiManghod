@@ -81,6 +81,7 @@ class _MyWidgetState extends State<SchedulePage> {
           onTap: () {
             setState(() {
               Navigator.of(context).push(MaterialPageRoute(
+                  fullscreenDialog: true,
                   builder: (context) => EditSchedulePage(
                         name: widget.name,
                         schedId: sched.id,
@@ -111,6 +112,7 @@ class _MyWidgetState extends State<SchedulePage> {
                   onPressed: (() {
                     setState(() {
                       Navigator.of(context).push(MaterialPageRoute(
+                          fullscreenDialog: true,
                           builder: (context) => AddSchedulePage(
                                 name: widget.name,
                               )));
@@ -180,6 +182,7 @@ class _MyWidgetState extends State<SchedulePage> {
                         onPressed: (() {
                           setState(() {
                             Navigator.of(context).push(MaterialPageRoute(
+                                fullscreenDialog: true,
                                 builder: (context) => AddSchedulePage(
                                       name: widget.name,
                                     )));

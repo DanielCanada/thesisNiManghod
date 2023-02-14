@@ -1,18 +1,23 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/rendering.dart';
+// import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
+// import 'package:pill_case_timer_app/models/user_profile.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/second_screen.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
-import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
+import 'package:pill_case_timer_app/pages/calendar/api/notifications_api.dart';
+import 'package:pill_case_timer_app/pages/calendar/calendar_carousel.dart';
+// import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
 import 'package:pill_case_timer_app/pages/container_page/container_page.dart';
-import 'package:pill_case_timer_app/pages/main_screen.dart';
+// import 'package:pill_case_timer_app/pages/old_main_page.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
 import 'package:iconsax/iconsax.dart';
@@ -48,6 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final DateTime now = DateTime.now();
   final cardHeight = 360;
 
+  late final LocalNotificationService service;
+
   late String dateName = DateFormat('EEEE').format(now);
   String genderOfUser = "";
   bool isChecked = false;
@@ -65,6 +72,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // assert(now.weekday == DateTime.monday);
     super.initState();
+    service = LocalNotificationService();
+    service.intialize();
+    listenToNotification();
+    // getUserDetails();
   }
 
   final iconList = <IconData>[
@@ -73,6 +84,20 @@ class _MyHomePageState extends State<MyHomePage> {
     Iconsax.calendar_1,
     Iconsax.box,
   ];
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen(onNoticationListener);
+
+  void onNoticationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      print('payload $payload');
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: ((context) => SecondScreen(payload: payload))));
+    }
+  }
 
   Widget checkForActivitiesToday(List<Schedule> schedules) {
     List<Schedule> todayScheds = [];
@@ -116,10 +141,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "Todays Medications",
-                        style: GoogleFonts.aBeeZee(
-                          textStyle: buttonFont,
+                      GestureDetector(
+                        onTap: () async {
+                          await service.showScheduledNotification(
+                            id: 0,
+                            title: 'HI',
+                            body: 'HOYYYYYYYYYYYYYYYYYYY',
+                            time:
+                                DateTime.now().add(const Duration(seconds: 10)),
+                          );
+                        },
+                        child: Text(
+                          "Todays Medications",
+                          style: GoogleFonts.aBeeZee(
+                            textStyle: buttonFont,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -158,11 +194,24 @@ class _MyHomePageState extends State<MyHomePage> {
         child: TodayCard(
           label: sched.schedName,
           alarmTime: sched.alarmTime,
-          details: sched.details,
+          containerNum: sched.containerNum,
           isChecked: isChecked,
           onChanged: (value) {
             setState(() {
               isChecked = value;
+              DateTime date = DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  sched.alarmTime.hour,
+                  sched.alarmTime.minute);
+              debugPrint(date.toString());
+              service.showScheduledNotification(
+                id: 0,
+                title: sched.schedName,
+                body: 'Medicine dropped at container#${sched.containerNum}',
+                time: date,
+              );
             });
           },
         ),
@@ -265,6 +314,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       var userDocument = snapshot.data;
                       genderOfUser = snapshot.data!["gender"].toString();
+                      // add to userProfile for calendar and pdf
+                      // userProfile = UserProfile(
+                      //     firstName: snapshot.data!["firstName"].toString(),
+                      //     lastName: snapshot.data!["lastName"].toString(),
+                      //     age: snapshot.data!["age"],
+                      //     gender: snapshot.data!["gender"].toString(),
+                      //     email: snapshot.data!["email"].toString());
                       return Text(
                         userDocument![
                             "firstName"] /* +
@@ -348,7 +404,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             buildMainScreen(context),
             SchedulePage(name: name[0]),
-            LogsPage(),
+            NewCalendar(
+              docName: name[0],
+            ),
+            // LogsPage(),
             // UnderDevelopment(),
             ContainerPage(
               docID: name[0],

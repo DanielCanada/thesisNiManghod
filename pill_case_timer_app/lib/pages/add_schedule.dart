@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:day_picker/day_picker.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class AddSchedulePage extends StatefulWidget {
   final String name;
@@ -24,10 +25,12 @@ class _AddScheduleState extends State<AddSchedulePage> {
       fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black);
   final buttonFont = const TextStyle(
       fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
+  final bodyFont = const TextStyle(
+      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
 
   // text controllers
   final schedNameController = TextEditingController();
-  final detailsController = TextEditingController();
+  // final cNumController = TextEditingController();
   final durationController = TextEditingController();
   final doctorController = TextEditingController();
 
@@ -41,11 +44,21 @@ class _AddScheduleState extends State<AddSchedulePage> {
   TimeOfDay time = const TimeOfDay(hour: 12, minute: 00);
   bool iosStyle = true;
 
+  // Container Numbers
+  // gender & age
+  final List<String> containerNumbers = [
+    '1',
+    '2',
+    '3',
+  ];
+  String? selectedContainer;
+  bool updatedContainer = false;
+
   @override
   void initState() {
     super.initState();
     schedNameController.addListener(() => setState(() {}));
-    detailsController.addListener(() => setState(() {}));
+    // cNumController.addListener(() => setState(() {}));
     durationController.addListener(() => setState(() {}));
     doctorController.addListener(() => setState(() {}));
   }
@@ -53,7 +66,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
   @override
   void dispose() {
     schedNameController.dispose();
-    detailsController.dispose();
+    // cNumController.dispose();
     durationController.dispose();
     doctorController.dispose();
     super.dispose();
@@ -65,7 +78,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
   }
 
   // create to firebase
-  Future createSchedule(String schedName, String schedDate, String details,
+  Future createSchedule(String schedName, String schedDate, String containerNum,
       String duration, String doctorName, TimeOfDay alarmTime) async {
     final docSched = FirebaseFirestore.instance
         .collection("patients")
@@ -77,7 +90,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
         id: docSched.id,
         schedName: schedName,
         schedDate: schedDate,
-        details: details,
+        containerNum: containerNum,
         duration: duration,
         doctorName: doctorName,
         alarmTime: join(DateTime.now(), alarmTime),
@@ -118,9 +131,9 @@ class _AddScheduleState extends State<AddSchedulePage> {
   // W I D G E T S
   //name widget
   Widget buildName(TextEditingController controller) => Padding(
-        padding: const EdgeInsets.only(left: 10.0),
+        padding: const EdgeInsets.only(left: 8.0),
         child: SizedBox(
-          width: 260,
+          width: 250,
           child: TextFormField(
             controller: controller,
             cursorColor: Colors.black,
@@ -170,7 +183,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                 createSchedule(
                     schedNameController.text.trim(),
                     daysSelected.join(""),
-                    detailsController.text.trim(),
+                    selectedContainer!.trim(),
                     durationController.text.trim(),
                     doctorController.text.trim(),
                     time);
@@ -243,6 +256,66 @@ class _AddScheduleState extends State<AddSchedulePage> {
         ],
       );
 
+  Widget dropDownContainerNum() => DropdownButtonFormField2(
+        decoration: InputDecoration(
+          //Add isDense true and zero Padding.
+          //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+          isDense: false,
+          contentPadding: EdgeInsets.zero,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                  color: Colors.deepOrange,
+                  width: 2,
+                  style: BorderStyle.solid)),
+          //Add more decoration as you want here
+          //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+        ),
+        isExpanded: true,
+        hint: Text(
+          "Select Container",
+          style: GoogleFonts.amaticSc(
+            textStyle: bodyFont,
+          ),
+        ),
+        icon: const Icon(
+          Icons.arrow_drop_down,
+          color: Colors.deepOrange,
+        ),
+        iconSize: 30,
+        buttonHeight: 50,
+        buttonPadding: const EdgeInsets.only(left: 20, right: 10),
+        dropdownDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        items: containerNumbers
+            .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: GoogleFonts.amaticSc(
+                      textStyle: bodyFont,
+                    ),
+                  ),
+                ))
+            .toList(),
+        validator: (value) {
+          if (value == null) {
+            return 'Please select containers.';
+          }
+        },
+        onChanged: (value) {
+          //Do something when changing the item if you want.
+          selectedContainer = value.toString();
+          updatedContainer = true;
+        },
+        onSaved: (value) {
+          selectedContainer = value.toString();
+          updatedContainer = true;
+        },
+      );
+
   void onTimeChanged(TimeOfDay newTime) {
     setState(() {
       time = newTime;
@@ -266,10 +339,10 @@ class _AddScheduleState extends State<AddSchedulePage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Container(
-              padding: const EdgeInsets.only(left: 30, right: 30.0, bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -282,13 +355,20 @@ class _AddScheduleState extends State<AddSchedulePage> {
                     ],
                   ),
                   // Details
-                  Row(
-                    children: <Widget>[
-                      buildText("Purpose:",
-                          GoogleFonts.amaticSc(textStyle: titleFont)),
-                      buildName(detailsController),
-                    ],
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        buildText("Container:",
+                            GoogleFonts.amaticSc(textStyle: titleFont)),
+                        SizedBox(width: 250, child: dropDownContainerNum()),
+                      ],
+                    ),
                   ),
+
+                  // buildName(cNumController),
                   //Duration
                   Row(
                     children: <Widget>[
@@ -341,9 +421,9 @@ class _AddScheduleState extends State<AddSchedulePage> {
                       ),
                     ],
                   ),
-                  // Sound
+                  // Sound / Notes
                   buildText(
-                      "Sound", GoogleFonts.amaticSc(textStyle: titleFont)),
+                      "Note: ", GoogleFonts.amaticSc(textStyle: titleFont)),
                   //Day Scheduler
                   Row(
                     children: <Widget>[

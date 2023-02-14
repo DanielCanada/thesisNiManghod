@@ -46,6 +46,7 @@ class _MyWidgetState extends State<SettingsPage> {
   ];
   String? selectedGender;
   bool newGender = false;
+  bool isActivated = false;
 
   @override
   void initState() {
@@ -78,7 +79,8 @@ class _MyWidgetState extends State<SettingsPage> {
           gender: newGender == false
               ? oldUser.gender.toString()
               : selectedGender.toString(),
-          lastName: lastName);
+          lastName: lastName,
+          deviceActivated: isActivated);
 
       final json = updatedUser.toJson();
 
@@ -276,11 +278,11 @@ class _MyWidgetState extends State<SettingsPage> {
                               onChanged: (value) {
                                 //Do something when changing the item if you want.
                                 selectedGender = value.toString();
-                                newGender == true;
+                                newGender = true;
                               },
                               onSaved: (value) {
                                 selectedGender = value.toString();
-                                newGender == true;
+                                newGender = true;
                               },
                             ),
                           ],
@@ -346,6 +348,7 @@ class _MyWidgetState extends State<SettingsPage> {
                 if (snapshot.hasError) {
                   return const SomethingWentWrong();
                 } else if (snapshot.hasData) {
+                  isActivated = snapshot.data!.deviceActivated;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -381,8 +384,8 @@ class _MyWidgetState extends State<SettingsPage> {
                         style: GoogleFonts.amaticSc(textStyle: bodyFont),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10.0, left: 120, right: 120),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 90),
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
@@ -412,7 +415,6 @@ class _MyWidgetState extends State<SettingsPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
                       const Divider(
                         thickness: 4,
                         color: Colors.white,
