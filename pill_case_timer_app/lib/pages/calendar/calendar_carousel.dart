@@ -233,6 +233,17 @@ class _NewCalendarState extends State<NewCalendar> {
                                         date: key.createdAt,
                                         title: key.schedName,
                                         icon: _eventIcon,
+                                        dot: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 1.0),
+                                          color: key.containerNum == "1"
+                                              ? Colors.red
+                                              : key.containerNum == "2"
+                                                  ? Colors.blue
+                                                  : Colors.purple,
+                                          height: 5.0,
+                                          width: 5.0,
+                                        ),
                                       ));
                                 }
                                 // debugPrint(

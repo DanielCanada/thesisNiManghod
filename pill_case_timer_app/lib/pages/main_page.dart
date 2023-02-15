@@ -3,21 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
-// import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
-import 'package:pill_case_timer_app/models/user_profile.dart';
-// import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:pill_case_timer_app/pages/aux_pages/second_screen.dart';
-import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
+// import 'package:pill_case_timer_app/pages/aux_pages/under_dev.dart';
 import 'package:pill_case_timer_app/pages/calendar/api/notifications_api.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_carousel.dart';
-// import 'package:pill_case_timer_app/pages/calendar/calendar_events.dart';
 import 'package:pill_case_timer_app/pages/container_page/container_page.dart';
-// import 'package:pill_case_timer_app/pages/old_main_page.dart';
 import 'package:pill_case_timer_app/pages/schedule_page.dart';
 import 'package:pill_case_timer_app/pages/settings.dart';
 import 'package:iconsax/iconsax.dart';
@@ -120,8 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildMainScreen(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 148, 215, 231),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -145,8 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () async {
                           await service.showScheduledNotification(
                             id: 0,
-                            title: 'HI',
-                            body: 'HOYYYYYYYYYYYYYYYYYYY',
+                            title: 'Todays Medications Notification Alert',
+                            body: 'Content of the notification alert',
                             time:
                                 DateTime.now().add(const Duration(seconds: 10)),
                           );
@@ -189,33 +183,38 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildSchedules(Schedule sched) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: TodayCard(
-          label: sched.schedName,
-          alarmTime: sched.alarmTime,
-          containerNum: sched.containerNum,
-          isChecked: isChecked,
-          onChanged: (value) {
-            setState(() {
-              isChecked = value;
-              DateTime date = DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day,
-                  sched.alarmTime.hour,
-                  sched.alarmTime.minute);
-              debugPrint(date.toString());
-              service.showScheduledNotification(
-                id: 0,
-                title: sched.schedName,
-                body: 'Medicine dropped at container#${sched.containerNum}',
-                time: date,
-              );
-            });
-          },
-        ),
-      );
+  Widget buildSchedules(Schedule sched) {
+    UniqueKey key = UniqueKey();
+    debugPrint(key.toString());
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: TodayCard(
+        key: key,
+        label: sched.schedName,
+        alarmTime: sched.alarmTime,
+        containerNum: sched.containerNum,
+        isChecked: isChecked,
+        onChanged: (value) {
+          setState(() {
+            isChecked = value;
+            DateTime date = DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                sched.alarmTime.hour,
+                sched.alarmTime.minute);
+            debugPrint(date.toString());
+            service.showScheduledNotification(
+              id: 0,
+              title: sched.schedName,
+              body: 'Medicine dropped at container#${sched.containerNum}',
+              time: date,
+            );
+          });
+        },
+      ),
+    );
+  }
 
   Widget buildEmptyActivities() {
     return SizedBox(
@@ -407,8 +406,6 @@ class _MyHomePageState extends State<MyHomePage> {
             NewCalendar(
               docName: name[0],
             ),
-            // LogsPage(),
-            // UnderDevelopment(),
             ContainerPage(
               docID: name[0],
             ),

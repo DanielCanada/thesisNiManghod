@@ -422,8 +422,7 @@ class _AddScheduleState extends State<AddSchedulePage> {
                     ],
                   ),
                   // Sound / Notes
-                  buildText(
-                      "Note: ", GoogleFonts.amaticSc(textStyle: titleFont)),
+                  // buildText("Note: ", GoogleFonts.amaticSc(textStyle: titleFont)),
                   //Day Scheduler
                   Row(
                     children: <Widget>[
