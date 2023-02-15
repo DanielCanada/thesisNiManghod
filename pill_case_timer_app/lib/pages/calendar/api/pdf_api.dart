@@ -2,34 +2,35 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PdfApi {
   static Future<File> generatePDF({
+    required List<Schedule> pastSchedules,
     required UserProfile user,
     required ByteData? imageSignature,
   }) async {
     final document = PdfDocument();
     final page = document.pages.add();
 
-    drawGrid(page);
+    drawGrid(page, pastSchedules);
     drawSignature(user, page, imageSignature!);
 
     return saveFile(document);
   }
 
-  static void drawGrid(PdfPage page) {
+  static void drawGrid(PdfPage page, List<Schedule> pastSchedules) {
     final grid = PdfGrid();
-    grid.columns.add(count: 5);
+    grid.columns.add(count: 4);
 
     final headerRow = grid.headers.add(1)[0];
     headerRow.cells[0].value = "Medicine";
-    headerRow.cells[1].value = "Description";
-    headerRow.cells[2].value = "Scheduled Dates";
-    headerRow.cells[3].value = "Scheduled Time";
-    headerRow.cells[4].value = "Doctor";
+    headerRow.cells[1].value = "Scheduled Date";
+    headerRow.cells[2].value = "Scheduled Time";
+    headerRow.cells[3].value = "Doctor";
 
     // styles
     headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(91, 110, 219));
@@ -37,12 +38,16 @@ class PdfApi {
     headerRow.style.font =
         PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold);
 
-    final row = grid.rows.add();
-    row.cells[0].value = "Medicine 01";
-    row.cells[1].value = "for sickness";
-    row.cells[2].value = "date 01, date 02, date 03";
-    row.cells[3].value = "time 01";
-    row.cells[4].value = "Dr. Doctor";
+    pastSchedules.forEach((element) {
+      DateTime now = DateTime.now();
+      DateTime time = DateTime(now.year, now.month, now.day,
+          element.alarmTime.hour, element.alarmTime.minute);
+      final row = grid.rows.add();
+      row.cells[0].value = element.schedName;
+      row.cells[1].value = DateFormat.yMMMd().format(element.createdAt);
+      row.cells[2].value = DateFormat.jm().format(time);
+      row.cells[3].value = element.doctorName;
+    });
 
     for (int i = 0; i < headerRow.cells.count; i++) {
       headerRow.cells[i].style.cellPadding =

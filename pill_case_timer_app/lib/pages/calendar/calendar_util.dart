@@ -15,3 +15,14 @@ const bodyFont =
     TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
 const bodyFontW =
     TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
+
+Widget currentMonthWidget(String currentMonth) {
+  return Expanded(
+      child: Text(
+    currentMonth,
+    style: const TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 24.0,
+    ),
+  ));
+}

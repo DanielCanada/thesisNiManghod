@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +11,17 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_case_timer_app/models/schedule.dart';
 import 'package:pill_case_timer_app/models/user_profile.dart';
+import 'package:pill_case_timer_app/pages/aux_pages/went_wrong_page.dart';
 import 'package:pill_case_timer_app/pages/calendar/calendar_util.dart';
 import 'api/pdf_api.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'package:open_file/open_file.dart';
 import 'package:iconsax/iconsax.dart';
+
+// Todo:
+//    - fix notifications so that dev does not use gesture detecture or buttons to feature the notification
+//    - add sound to notif and change similar to alarm ( difficult since i dont have experience)
+//    - add feature that after it has been notified then it will automatically add to the database
 
 class NewCalendar extends StatefulWidget {
   final String docName;
@@ -29,7 +34,7 @@ class NewCalendar extends StatefulWidget {
 class _NewCalendarState extends State<NewCalendar> {
   final keySignaturePad = GlobalKey<SfSignaturePadState>();
   final DateTime _currentDate = DateTime.now();
-  DateTime _currentDate2 = DateTime(2023, 2, 14);
+  DateTime _currentDate2 = DateTime.now();
   String _currentMonth = DateFormat.yMMM().format(DateTime.now());
   DateTime _targetDateTime = DateTime(2023, 2, 15);
   static final Widget _eventIcon = Container(
@@ -48,46 +53,20 @@ class _NewCalendarState extends State<NewCalendar> {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
-  final EventList<Event> _markedDateMap = EventList<Event>(
-    events: {},
-  );
+  late List<Schedule> pastSchedulesToPDF;
+
+  Stream<List<Schedule>> getPastSchedules() => FirebaseFirestore.instance
+      .collection('patients')
+      .doc(widget.docName)
+      .collection("finished_schedules")
+      .orderBy("createdAt", descending: true)
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => Schedule.fromJson(doc.data())).toList());
 
   @override
   void initState() {
     /// Add more events to _markedDateMap EventList
-    _markedDateMap.add(
-        DateTime(2023, 2, 25),
-        Event(
-          date: DateTime(2023, 2, 25),
-          title: 'Event 5',
-          icon: _eventIcon,
-        ));
-
-    _markedDateMap.add(
-        DateTime(2023, 2, 17),
-        Event(
-          date: DateTime(2023, 2, 17),
-          title: 'Event 4',
-          icon: _eventIcon,
-        ));
-
-    _markedDateMap.addAll(DateTime(2023, 2, 18), [
-      Event(
-        date: DateTime(2023, 2, 18),
-        title: 'Event 1',
-        icon: _eventIcon,
-      ),
-      Event(
-        date: DateTime(2023, 2, 18),
-        title: 'Event 2',
-        icon: _eventIcon,
-      ),
-      Event(
-        date: DateTime(2023, 2, 18),
-        title: 'Event 3',
-        icon: _eventIcon,
-      ),
-    ]);
     super.initState();
   }
 
@@ -118,6 +97,14 @@ class _NewCalendarState extends State<NewCalendar> {
     final json = newSched.toJson();
 
     await docSched.set(json);
+  }
+
+  Widget buildEventTexts(event) {
+    List titles = [];
+    for (var e in event) {
+      titles.add(e.title);
+    }
+    return Text(titles.join('\n\n').toString());
   }
 
   @override
@@ -152,7 +139,7 @@ class _NewCalendarState extends State<NewCalendar> {
                           "2",
                           "3 days",
                           "Dr. doofenshmirtz",
-                          DateTime(2023, 2, 10, 15, 30));
+                          DateTime(2023, 2, 13, 15, 30));
                       debugPrint("added to postScheds");
                     },
                     child: Text(
@@ -178,14 +165,7 @@ class _NewCalendarState extends State<NewCalendar> {
                             ),
                             child: Row(
                               children: <Widget>[
-                                Expanded(
-                                    child: Text(
-                                  _currentMonth,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24.0,
-                                  ),
-                                )),
+                                currentMonthWidget(_currentMonth),
                                 TextButton(
                                   child: const Icon(
                                     CupertinoIcons.left_chevron,
@@ -221,70 +201,143 @@ class _NewCalendarState extends State<NewCalendar> {
                               ],
                             ),
                           ),
-                          CalendarCarousel<Event>(
-                            todayBorderColor: Colors.green,
-                            onDayPressed: (date, events) {
-                              setState(() => _currentDate2 = date);
-                              for (var event in events) {
-                                print(event.title);
+                          StreamBuilder<List<Schedule>>(
+                            stream: getPastSchedules(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                // for error handling
+                                return const SomethingWentWrong();
+                              } else if (snapshot.hasData) {
+                                final schedules = snapshot.data!;
+                                pastSchedulesToPDF = schedules;
+                                final EventList<Event> _markedDateMap =
+                                    EventList<Event>(
+                                  events: {},
+                                );
+                                _markedDateMap.clear();
+                                debugPrint(
+                                    "successfully built streambuilder with data from firebase");
+                                // manipulate data
+                                // List<DateTime> pastScheduleDates = [];
+                                // first option
+                                // var cNum = schedules.map((e) => e.createdAt);
+                                // debugPrint(cNum.toString());
+                                for (var key in schedules) {
+                                  // pastScheduleDates.add(key.createdAt);
+                                  _markedDateMap.add(
+                                      DateTime(
+                                          key.createdAt.year,
+                                          key.createdAt.month,
+                                          key.createdAt.day),
+                                      Event(
+                                        date: key.createdAt,
+                                        title: key.schedName,
+                                        icon: _eventIcon,
+                                      ));
+                                }
+                                // debugPrint(
+                                //     pastScheduleDates[0].toIso8601String());
+
+                                debugPrint(
+                                    _markedDateMap.events.length.toString());
+
+                                // return calendar view
+                                return CalendarCarousel<Event>(
+                                  todayBorderColor: Colors.green,
+                                  onDayPressed: (date, events) {
+                                    setState(() => _currentDate2 = date);
+                                    for (var event in events) {
+                                      print(event.title);
+                                    }
+                                  },
+                                  daysHaveCircularBorder: true,
+                                  showOnlyCurrentMonthDate: false,
+                                  weekendTextStyle: const TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                  thisMonthDayBorderColor: Colors.grey,
+                                  weekFormat: false,
+                                  //      firstDayOfWeek: 4,
+                                  markedDatesMap: _markedDateMap,
+                                  height: 350,
+                                  selectedDateTime: _currentDate2,
+                                  targetDateTime: _targetDateTime,
+                                  customGridViewPhysics:
+                                      const NeverScrollableScrollPhysics(),
+                                  markedDateCustomShapeBorder:
+                                      const CircleBorder(
+                                          side: BorderSide(color: Colors.red)),
+                                  markedDateCustomTextStyle: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.blue,
+                                  ),
+                                  showHeader: false,
+                                  todayTextStyle: const TextStyle(
+                                    color: Colors.blue,
+                                  ),
+                                  // markedDateShowIcon: true,
+                                  // markedDateIconMaxShown: 2,
+                                  // markedDateIconBuilder: (event) {
+                                  //   return event.icon;
+                                  // },
+                                  // markedDateMoreShowTotal:
+                                  //     true,
+                                  todayButtonColor: Colors.yellow,
+                                  selectedDayTextStyle: const TextStyle(
+                                    color: Colors.yellow,
+                                  ),
+                                  minSelectedDate: _currentDate
+                                      .subtract(const Duration(days: 360)),
+                                  maxSelectedDate: _currentDate
+                                      .add(const Duration(days: 360)),
+                                  prevDaysTextStyle: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.pinkAccent,
+                                  ),
+                                  inactiveDaysTextStyle: const TextStyle(
+                                    color: Colors.tealAccent,
+                                    fontSize: 16,
+                                  ),
+                                  onCalendarChanged: (DateTime date) {
+                                    setState(() {
+                                      _targetDateTime = date;
+                                      _currentMonth = DateFormat.yMMM()
+                                          .format(_targetDateTime);
+                                    });
+                                  },
+                                  onDayLongPressed: (DateTime date) {
+                                    // since this is a function, I can add a widget that displays all events on that specific date
+                                    _markedDateMap.events.forEach(
+                                      (eventDate, value) {
+                                        if (date == eventDate) {
+                                          debugPrint('long pressed date $date');
+                                          showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              title: Text(
+                                                  'Medications during ${DateFormat.yMMMMd('en_US').format(date)}'),
+                                              content: buildEventTexts(value),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                  child: Text("Ok"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                );
+                              } else {
+                                // preloader
+                                return Center(
+                                    child:
+                                        Lottie.asset("assets/loading02.json"));
                               }
-                            },
-                            daysHaveCircularBorder: true,
-                            showOnlyCurrentMonthDate: false,
-                            weekendTextStyle: const TextStyle(
-                              color: Colors.red,
-                            ),
-                            thisMonthDayBorderColor: Colors.grey,
-                            weekFormat: false,
-                            //      firstDayOfWeek: 4,
-                            markedDatesMap: _markedDateMap,
-                            height: 350,
-                            selectedDateTime: _currentDate2,
-                            targetDateTime: _targetDateTime,
-                            customGridViewPhysics:
-                                const NeverScrollableScrollPhysics(),
-                            markedDateCustomShapeBorder: const CircleBorder(
-                                side: BorderSide(color: Colors.yellow)),
-                            markedDateCustomTextStyle: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                            ),
-                            showHeader: false,
-                            todayTextStyle: const TextStyle(
-                              color: Colors.blue,
-                            ),
-                            // markedDateShowIcon: true,
-                            // markedDateIconMaxShown: 2,
-                            // markedDateIconBuilder: (event) {
-                            //   return event.icon;
-                            // },
-                            // markedDateMoreShowTotal:
-                            //     true,
-                            todayButtonColor: Colors.yellow,
-                            selectedDayTextStyle: const TextStyle(
-                              color: Colors.yellow,
-                            ),
-                            minSelectedDate: _currentDate
-                                .subtract(const Duration(days: 360)),
-                            maxSelectedDate:
-                                _currentDate.add(const Duration(days: 360)),
-                            prevDaysTextStyle: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.pinkAccent,
-                            ),
-                            inactiveDaysTextStyle: const TextStyle(
-                              color: Colors.tealAccent,
-                              fontSize: 16,
-                            ),
-                            onCalendarChanged: (DateTime date) {
-                              setState(() {
-                                _targetDateTime = date;
-                                _currentMonth =
-                                    DateFormat.yMMM().format(_targetDateTime);
-                              });
-                            },
-                            onDayLongPressed: (DateTime date) {
-                              print('long pressed date $date');
                             },
                           ),
                         ],
@@ -369,8 +422,10 @@ class _NewCalendarState extends State<NewCalendar> {
         gender: data['gender'].toString().trim(),
         email: data['email'].toString().trim());
 
-    final file =
-        await PdfApi.generatePDF(user: user, imageSignature: imageSignature!);
+    final file = await PdfApi.generatePDF(
+        user: user,
+        imageSignature: imageSignature!,
+        pastSchedules: pastSchedulesToPDF);
 
     // ignore: use_build_context_synchronously
     Navigator.of(context).pop();
